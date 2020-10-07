@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />-->
+    <!-- 안드로이드 홈화면추가시 상단 주소창 제거 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" href="/community_s.png">
+    <meta name="theme-color" content="#4898bd">
+
+
+    <!-- ios홈화면추가시 상단 주소창 제거 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="/community_s.png">
+
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+#up_bar {
+            background-color: #58A8D0;
+            height: 230px;
+            width: 100%;
+        }
+
+        footer {
+            height: 200px;
+            overflow: hidden;
+            position: fixed;
+            bottom: 0px;
+            background-color: white;
+            padding-left: 20px;
+        }
+
+        #main, #mapping, #community, #chat, #info {
+            float: left;
+            height: 200px;
+            width: 188px;
+            border-top: 1px solid #58A8D0;
+        }
+
+        img {
+            height: 80px;
+            width: 80px;
+            margin-left: 60px;
+            margin-top: 60px;
+            opacity: 0.3;
+        }
+
+        #content {
+            background-color: #D5D5D5;
+            margin: 0;
+            padding: 50px;
+            height: 1215px;
+        }
+    </style>
+</head>
+<body>
+    <div id="up_bar">
+        <img style="padding-bottom : 80px; margin : 0; height : 140px; width : 140px; margin-left : 30px; opacity : 1.0;" src="alarm.png" onclick="goAlarm()"><img src="name.png" style="margin-left: 50px; margin-top: 10px;  width : 550px; height : 280px; opacity: 1.0; " onclick="goHome()">
+        <img style="padding-left : 40px; padding-bottom : 100px; margin : 0; height : 110px; width : 110px; margin-left : 20px; opacity : 1.0;" src="search.png" onclick="goSearch()">
+    </div>
+    <div id=content>
+        <div style="background-color: white; height : 1180px; padding-top: 50px;">
+            <input id="subject" type=number value="1234" style=" margin-left : 30px; width : 120px; height : 80px; border : 0; border-bottom: 3px solid #CACACA; font-size: 50px; padding-left: 20px;" onclick="this.value = '';">
+            <input id="title" type=text value="제목" style=" margin-left : 20px; width : 620px; height : 80px; border : 0; border-bottom: 3px solid #CACACA; font-size: 50px; padding-left: 20px;" onclick="this.value=''">
+            <textarea id="contents" value="내용" rows=30 cols=80 style="font-size: 50px; height: 800px; width : 800px; margin-left: 30px; margin-top: 20px; border : 3px solid #CACACA;"></textarea>
+            <input type=file style="border : 0; font-size: 40px; padding-left: 30px; margin-top: 20px; margin-left: 30px; margin-bottom: 30px; width : 600px;">
+            <input id="anony" type=checkbox checked="on" style="width: 30px; height : 30px; color : #58A8D0;"><span style="font-size : 40px;">익명</span>
+            <div>
+                <br />
+                <button onclick="writePosts()" style="background-color: #58A8D0; width : 150px; height: 90px; font-size: 50px; color : white; border : 0; border-radius: 20px; margin-left: 300px;">작성</button>
+                <button onclick="goCommu()" style="background-color: #808080; width : 150px; height: 90px; font-size: 50px; color : white; border : 0; border-radius: 20px;">취소</button>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div id=main><img src="home.png" onclick="goHome()"></div>
+        <div id=mapping><img src="mapping.png" onclick="goMapping()"></div>
+        <div id=community><img src="community_s.png" style="opacity : 1.0;" onclick="goCommu()"></div>
+        <div id=chat><img src="chat.png" onclick="goChat()"></div>
+        <div id=info><img src="setting.png" onclick="goSet()" ;></div>
+    </footer>
+    <script>
+        function goAlarm() {
+            location.replace('info.html');
+        }
+        function goSearch() {
+            location.replace('search.html');
+        }
+        function goHome() {
+            location.replace('main.html');
+        }
+        function goMapping() {
+            location.replace('mapping.html');
+            //window.location.assign('mapping.html');
+        }
+        function goCommu() {
+            location.replace('community.html');
+        }
+        function goChat() {
+            location.replace('chat.html');
+        }
+        function goSet() {
+            location.replace('setting.html');
+        }
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.1/firebase.js"></script>
+    <script>
+
+
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAINOpROygK44HoqMJCbflrh9sJGDXuBv8",
+            authDomain: "friend-s-friends.firebaseapp.com",
+            databaseURL: "https://friend-s-friends.firebaseio.com",
+            projectId: "friend-s-friends",
+            storageBucket: "friend-s-friends.appspot.com",
+            messagingSenderId: "330666557474"
+        };
+        firebase.initializeApp(config);
+
+        //var database = firebase.database();
+
+        var nnum = sessionStorage.num; //로그인 한사람의 학번
+
+        var dt = new Date();
+        function getTimeStamp() {
+            var d = new Date();
+            var s =
+              leadingZeros(d.getFullYear(), 4) + '-' +
+              leadingZeros(d.getMonth() + 1, 2) + '-' +
+              leadingZeros(d.getDate(), 2) + ' ' +
+
+              leadingZeros(d.getHours(), 2) + ':' +
+              leadingZeros(d.getMinutes(), 2);
+
+            return s;
+        }
+        function leadingZeros(n, digits) {
+            var zero = '';
+            n = n.toString();
+
+            if (n.length < digits) {
+                for (i = 0; i < digits - n.length; i++)
+                    zero += '0';
+            }
+            return zero + n;
+        }
+
+        function writePosts() { //게시글 작성
+
+            var p_inNum = firebase.database().ref().child('posts').push().key;//key값 저장
+
+            console.log(nnum + " " + sessionStorage.num);
+            firebase.database().ref('posts/' + p_inNum).set({
+                subNum: document.getElementById('subject').value,//과목번호
+                title: document.getElementById('title').value,//제목
+                contents: document.getElementById('contents').value,//내용
+                anony: document.getElementById('anony').checked, //익명 체크 //ture 이면 익명 ,false 이면 공개
+                id: nnum, //작성자
+                code: p_inNum,//게시글고유번호
+                time: getTimeStamp()
+            });
+            console.log("end");
+
+            //작성 후 3초 대기 후 페이지 뒤로가기(파이어베이스 비동기 문제로 게시글이 서버에 올라가지 않았는데 페이지 이동해버린다. -> 서버에 업로드 중 페이지 종료 발생)
+            setTimeout(function () { goCommu(); }, 1000);
+        }
+    </script>
+</body>
+</html>

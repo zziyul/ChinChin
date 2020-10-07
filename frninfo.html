@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />-->
+    <!-- 안드로이드 홈화면추가시 상단 주소창 제거 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#4898bd">
+
+
+    <link rel="icon" href="/community_s.png">
+    <!-- ios홈화면추가시 상단 주소창 제거 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="/community_s.png">
+
+    <title>frninfo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #up_bar {
+            background-color: #58A8D0;
+            height: 230px;
+            width: 100%;
+        }
+        footer {
+            height: 200px;
+            overflow: hidden;
+            position: fixed;
+            bottom: 0px;
+            background-color: white;
+            padding-left: 20px;
+        }
+
+        #main, #mapping, #community, #chat, #info {
+            float: left;
+            height: 200px;
+            width: 188px;
+            border-top: 1px solid #58A8D0;
+        }
+
+        img {
+            height: 80px;
+            width: 80px;
+            margin-left: 60px;
+            margin-top: 60px;
+            opacity: 0.3;
+        }
+
+        #content {
+            background-color: #CACACA;
+            padding-top: 40px;
+            height: 1255px;
+        }
+
+        #recommend {
+            width: 900px;
+            height: 200px;
+            margin-left: 35px;
+            background-color: white;
+        }
+
+        #profile {
+            float: left;
+            width: 150px;
+            height: 150px;
+            margin: 25px;
+            opacity: 1.0;
+        }
+
+        #text {
+            margin-top: 25px;
+            float: left;
+            font-size: 35px;
+        }
+
+        #recommend {
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+            #recommend button {
+                margin-top: 40px;
+                width: 120px;
+                height: 120px;
+                float: left;
+            }
+
+        #sb {
+            overflow: hidden;
+            float: right;
+        }
+    </style>
+    <script>
+        var myId;
+        var FB;
+        var SRB;
+        var RRB;
+        function init() {
+            console.log('init');
+            myId = sessionStorage.num;
+            console.log(sessionStorage.num);
+            console.log(myId);
+            // myId = '201611187';
+            console.log('userInfo/' + myId + '/friend');
+            FB = firebase.database().ref('userInfo/' + myId + '/friend');
+            console.log(FB);
+            FB.once('value', function (snapshot) {
+                console.log('init2');
+                FB_Init();
+                console.log("??");
+                snapshot.forEach(function (childsnapshot) {
+                    console.log("?");
+                    FB_Added(childsnapshot.key);
+                });
+            });
+            FB.on('child_added', function (snapshot) {
+                FB_Added(snapshot.key);
+            });
+            FB.on('child_removed', function (childsnapshot) {
+                FB_Removed(childsnapshot.key);
+            });
+
+            SRB = firebase.database().ref('userInfo/' + myId + '/f_requestSent');
+            SRB.once('value', function (snapshot) {
+                SRB_Init();
+                snapshot.forEach(function (childsnapshot) {
+                    SRB_Added(childsnapshot.key);
+                });
+            });
+            SRB.on('child_added', function (snapshot) {
+                SRB_Added(snapshot.key);
+            });
+            SRB.on('child_removed', function (childsnapshot) {
+                SRB_Removed(childsnapshot.key);
+            });
+
+            RRB = firebase.database().ref('userInfo/' + myId + '/f_requestReceived');
+            RRB.once('value', function (snapshot) {
+                RRB_Init();
+                snapshot.forEach(function (childsnapshot) {
+                    RRB_Added(childsnapshot.key);
+                });
+            });
+            RRB.on('child_added', function (snapshot) {
+                RRB_Added(snapshot.key);
+            });
+            RRB.on('child_removed', function (snapshot) {
+                RRB_Removed(snapshot.key);
+            });
+        }
+
+        var refCheck = function (ref, id, obj) {
+            return new Promise(function (rend) {
+                // refCheck는 ref의 정보를 받아와 처리하는 과정입니다.
+                // 이 프로미스에 then()을 붙여 실행하면, 이 rend까지 끝나기 전엔 then() 이후 명령들이 실행되지 않습니다.
+                ref.once('value').then(function (snapshot) {
+                    obj.bool = false;
+                    // promise를 정의합니다.
+                    var promise = new Promise(function (pend) {
+                        // promise는 snapshot.forEach()를 써서 friend 항목의 모든 child를 검사하는 과정입니다.
+                        // 이 프로미스에 then()을 붙여 실행하면, pend까지 끝나기 전엔 then() 이후의 명령들이 실행되지 않습니다.
+                        snapshot.forEach(function (childsnapshot) {
+                            if (id === childsnapshot.key) {
+                                obj.bool = true;    // id와 같은 값을 가진 child가 있다면 bool을 true로 바꿉니다.
+                            }
+                        });
+                        pend('p성공');
+                    });
+                    // 정의한 promise를 실행합니다. pend를 마친 다음에야 then 이후의 명령을 수행합니다.
+                    promise.then(function (pendval) {
+                        // then의 function 안에 인자가 있으면 fend의 내용을 받아옵니다.
+                        // 왜 그런지는 저도 모릅니다.
+                        console.log(pendval);
+                        // promise.then() 안에 rend가 있으므로 refCheck는 promise가 끝난 이후에 끝납니다.
+                        rend('r성공');
+                    });
+                });
+            });
+        };
+
+        // 자료형이 문자열인 id를 받아 친구신청을 보낼 수 있다면 보내는 함수입니다.
+        function sendFriendRequest(id) {
+            var obj1 = new Object();    // /friend를 검사할 때 쓸 변수
+            var obj2 = new Object();    // /f_requestSent를 검사할 때 쓸 변수
+            var obj3 = new Object();    // /f_requestReceived를 검사할 때 쓸 변수
+
+            var ref1 = firebase.database().ref('userInfo/' + myId + '/friend');
+            var ref2 = firebase.database().ref('userInfo/' + myId + '/f_requestSent');
+            var ref3 = firebase.database().ref('userInfo/' + myId + '/f_requestReceived');
+
+            // friend, f_requestSent, f_requestReceived를 모두 검사해본 뒤 then() 이후의 명령을 실행합니다.
+            Promise.all([refCheck(ref1, id, obj1), refCheck(ref2, id, obj2), refCheck(ref3, id, obj3)]).then(function (val) {
+                console.log(val);
+                // 만약 id가 자신의 id가 아니고, 친구 목록, 요청한 친구 목록, 요청받은 친구목록에도 없다면
+                if (myId !== id && obj1.bool === false && obj2.bool === false && obj3.bool === false) {
+                    // 자신의 f_requestSent에 상대방의 아이디를 추가하고
+                    firebase.database().ref('userInfo/' + myId + '/f_requestSent').child(id).set(id);
+                    // 상대방의 f_requestReceived에 자신의 아이디를 추가합니다.
+                    firebase.database().ref('userInfo/' + id + '/f_requestReceived').child(myId).set(myId);
+                }
+            });
+        }
+
+        // 자료형이 문자열인 id를 받아 보낸 친구신청을 해지하는 함수입니다.
+        function cancelFriendRequest(id) {
+            // remove는 해당 경로가 존재하지 않는다면 무시해버리기 때문에 별도의 검사를 생각할 필요가 없다고 생각해 아무것도 하지 않았습니다.
+            // 절대로 귀찮아서 아무 것도 검사하지 않은게 아닙니다.
+            var ref1 = firebase.database().ref('userInfo/' + myId + '/f_requestSent');
+            var ref2 = firebase.database().ref('userInfo/' + id + '/f_requestReceived');
+
+            ref1.child(id).remove();
+            ref2.child(myId).remove();
+        }
+
+        // 자료형이 문자열인 id를 받아 친구신청을 수락하고 friend에 넣습니다.
+        function acceptFriendRequest(id) {
+            var obj1 = new Object();
+            var obj2 = new Object();
+            var obj3 = new Object();
+            var ref1 = firebase.database().ref('userInfo/' + myId + '/friend');
+            var ref2 = firebase.database().ref('userInfo/' + myId + '/f_requestSent');
+            var ref3 = firebase.database().ref('userInfo/' + myId + '/f_requestReceived');
+
+            Promise.all([refCheck(ref1, id, obj1), refCheck(ref2, id, obj2), refCheck(ref3, id, obj3)]).then(function (val) {
+                console.log(val);
+                // 만일 id가 나의 id가 아니고 친구목록, 보낸 친구요청목록에 없고 받은 친구요청 목록에만 있다면,
+                if (myId !== id && obj1.bool === false && obj2.bool === false && obj3.bool === true) {
+                    ref1 = firebase.database().ref('userInfo/' + myId + '/f_requestReceived');
+                    ref2 = firebase.database().ref('userInfo/' + id + '/f_requestSent');
+                    ref1.child(id).remove();
+                    ref2.child(myId).remove();
+
+                    ref1 = firebase.database().ref('userInfo/' + myId + '/friend');
+                    ref2 = firebase.database().ref('userInfo/' + id + '/friend');
+                    ref1.child(id).set(id);
+                    ref2.child(myId).set(myId);
+                }
+            });
+        }
+
+        function rejectFriendRequest(id) {
+            firebase.database().ref('userInfo/' + myId + '/f_requestReceived/' + id).remove();
+            firebase.database().ref('userInfo/' + id + '/f_requestSent/' + myId).remove();
+        }
+
+        // 자료형이 문자열인 id를 받아 친구사이를 해제합니다.
+        function disjoinedFriend(id) {
+            // remove는 해당 경로가 존재하지 않는다면 무시해버리기 때문에 별도의 검사를 생각할 필요가 없다고 생각해 아무것도 하지 않았습니다.
+            // 절대로 귀찮아서 아무 것도 검사하지 않은게 아닙니다.
+            firebase.database().ref('userInfo/' + myId + '/friend/' + id).remove();
+            firebase.database().ref('userInfo/' + id + '/friend/' + myId).remove();
+        }
+
+        function FB_Init() {
+            var table = document.getElementById('friendBoard');
+            while (table.rows.length !== 0) {
+                table.deleteRow(0);
+            }
+        }
+        function FB_Added(snapshot) {
+            var table = document.getElementById('friendBoard');
+            // 붙일 행
+            var tr = document.createElement('tr');
+            tr.id = snapshot;
+            var td = document.createElement('td');
+            var recommend = document.createElement('div');
+            recommend.id = 'recommend';
+            // 프로필 사진 파트
+            var profile = document.createElement('img');
+            profile.id = 'profile';
+            profile.src = 'dog.jpg';
+            // 유저 정보 파트
+            var text = document.createElement('div');
+            text.id = 'text';
+            var name = document.createElement('div');
+            name.id = 'name';
+            var nameval;
+            firebase.database().ref('userInfo/' + snapshot + '/name').once('value', function (childsnapshot) {
+                console.log(childsnapshot);
+                nameval = childsnapshot.val();
+            }).then(function () {
+                name.appendChild(document.createTextNode(nameval));
+            });
+            var depart = document.createElement('div');
+            depart.id = 'depart';
+            var departval;
+            firebase.database().ref('userInfo/' + snapshot + '/major').once('value', function (childsnapshot) {
+                departval = childsnapshot.val();
+            }).then(function () {
+                depart.appendChild(document.createTextNode(departval));
+            });
+            var s_num = document.createElement('div');
+            s_num.id = 's_num';
+            s_num.appendChild(document.createTextNode(snapshot));
+            // 버튼 파트
+            var sb = document.createElement('div');
+            sb.id = 'sb';
+            var chat = document.createElement('button');
+            chat.innerHTML = '<img onclick="setChildValue(' + tr.id + ')" style = "margin : 0; width : 100px; height : 100px; opacity: 1.0;" src = "chat.png">';
+            var disjoin = document.createElement('button');
+            disjoin.innerHTML = '<img style = "margin : 0; width : 100px; height : 100px; opacity: 1.0;" src = "remove.png">';
+            disjoin.onclick = function () {
+                console.log(tr.id);
+                disjoinedFriend(tr.id);
+            };
+            table.appendChild(tr);
+            console.log('append');
+            tr.appendChild(td);
+            td.appendChild(recommend);
+            recommend.appendChild(profile);
+            recommend.appendChild(text);
+            recommend.appendChild(sb);
+            text.appendChild(name);
+            text.appendChild(depart);
+            text.appendChild(s_num);
+            sb.appendChild(chat);
+            sb.appendChild(disjoin);
+        }
+        function FB_Removed(snapshot) {
+            var table = document.getElementById('friendBoard');
+            for (var i = 0; i < table.rows.length; i++) {
+                if (table.rows[i].id === snapshot) {
+                    table.deleteRow(i);
+                }
+            }
+        }
+
+        // 받은 신청함 조절하기
+        function RRB_Init() {
+            var table = document.getElementById('receivedRequestBoard');
+            while (table.rows.length !== 0) {
+                table.deleteRow(0);
+            }
+        }
+        function RRB_Added(snapshot) {
+            var table = document.getElementById('receivedRequestBoard');
+            // 붙일 행
+            var tr = document.createElement('tr');
+            tr.id = snapshot;
+            var td = document.createElement('td');
+            var recommend = document.createElement('div');
+            recommend.id = 'recommend';
+            // 프로필 사진 파트
+            var profile = document.createElement('img');
+            profile.id = 'profile';
+            profile.src = 'dog.jpg';
+            // 유저 정보 파트
+            var text = document.createElement('div');
+            text.id = 'text';
+            var name = document.createElement('div');
+            name.id = 'name';
+            var nameval;
+            firebase.database().ref('userInfo/' + snapshot + '/name').once('value', function (childsnapshot) {
+                console.log(childsnapshot);
+                nameval = childsnapshot.val();
+            }).then(function () {
+                name.appendChild(document.createTextNode(nameval));
+            });
+            var depart = document.createElement('div');
+            depart.id = 'depart';
+            var departval;
+            firebase.database().ref('userInfo/' + snapshot + '/major').once('value', function (childsnapshot) {
+                departval = childsnapshot.val();
+            }).then(function () {
+                depart.appendChild(document.createTextNode(departval));
+            });
+            var s_num = document.createElement('div');
+            s_num.id = 's_num';
+            s_num.appendChild(document.createTextNode(snapshot));
+            // 버튼 파트
+            var sb = document.createElement('div');
+            sb.id = 'sb';
+            //var mapping = document.createElement('button');
+            //mapping.style.margin = 0;
+            //mapping.style.width = '100px';
+            ////mapping.sytle.height = '100px';
+            //mapping.style.opacity = 1.0;
+            //mapping.src = 'mapping.png';
+            var accept = document.createElement('button');
+            accept.style.margin = 0;
+            accept.style.width = '100px';
+            //accept.sytle.height = '100px';
+            accept.style.opacity = 1.0;
+            accept.innerHTML = '<img style = "margin : 0; width : 100px; height : 100px; opacity: 1.0;" src = "add_friend.png">';
+            accept.onclick = function () {
+                acceptFriendRequest(tr.id);
+            };
+            var reject = document.createElement('button');
+            reject.style.margin = 0;
+            reject.style.width = '100px';
+            //reject.sytle.height = '100px';
+            reject.style.opacity = 1.0;
+            reject.innerHTML = '<img style = "margin : 0; width : 100px; height : 100px; opacity: 1.0;" src = "remove.png">';
+            reject.onclick = function () {
+                rejectFriendRequest(tr.id);
+            };
+            table.appendChild(tr);
+            console.log('append');
+            tr.appendChild(td);
+            td.appendChild(recommend);
+            recommend.appendChild(profile);
+            recommend.appendChild(text);
+            recommend.appendChild(sb);
+            text.appendChild(name);
+            text.appendChild(depart);
+            text.appendChild(s_num);
+            //sb.appendChild(mapping);
+            sb.appendChild(accept);
+            sb.appendChild(reject);
+        }
+        function RRB_Removed(snapshot) {
+            var table = document.getElementById('receivedRequestBoard');
+            for (var i = 0; i < table.rows.length; i++) {
+                if (table.rows[i].id === snapshot) {
+                    table.deleteRow(i);
+                }
+            }
+        }
+
+        function SRB_Init() {
+            var table = document.getElementById('sentRequestBoard');
+            while (table.rows.length !== 0) {
+                table.deleteRow(0);
+            }
+        }
+        function SRB_Added(snapshot) {
+            var table = document.getElementById('sentRequestBoard');
+            // 붙일 행
+            var tr = document.createElement('tr');
+            tr.id = snapshot;
+            var td = document.createElement('td');
+            var recommend = document.createElement('div');
+            recommend.id = 'recommend';
+            // 프로필 사진 파트
+            var profile = document.createElement('img');
+            profile.id = 'profile';
+            profile.src = 'dog.jpg';
+            // 유저 정보 파트
+            var text = document.createElement('div');
+            text.id = 'text';
+            var name = document.createElement('div');
+            name.id = 'name';
+            var nameval;
+            firebase.database().ref('userInfo/' + snapshot + '/name').once('value', function (childsnapshot) {
+                console.log(childsnapshot);
+                nameval = childsnapshot.val();
+            }).then(function () {
+                name.appendChild(document.createTextNode(nameval));
+            });
+            var depart = document.createElement('div');
+            depart.id = 'depart';
+            var departval;
+            firebase.database().ref('userInfo/' + snapshot + '/major').once('value', function (childsnapshot) {
+                departval = childsnapshot.val();
+            }).then(function () {
+                depart.appendChild(document.createTextNode(departval));
+            });
+            var s_num = document.createElement('div');
+            s_num.id = 's_num';
+            s_num.appendChild(document.createTextNode(snapshot));
+            // 버튼 파트
+            var sb = document.createElement('div');
+            sb.id = 'sb';
+            //var mapping = document.createElement('button');
+            //mapping.style.margin = 0;
+            //mapping.style.width = '100px';
+            ////mapping.sytle.height = '100px';
+            //mapping.style.opacity = 1.0;
+            //mapping.src = 'mapping.png';
+            var cancel = document.createElement('button');
+            //cancel.style.margin = 0;
+            //cancel.style.width = '100px';
+            ////cancel.sytle.height = '100px';
+            //cancel.style.opacity = 1.0;
+            //cancel.src = 'add_friend.png';
+            cancel.innerHTML = '<img style = "margin : 0; width : 100px; height : 100px; opacity: 1.0;" src = "remove.png">';
+            cancel.onclick = function () {
+                cancelFriendRequest(tr.id);
+            };
+            table.appendChild(tr);
+            tr.appendChild(td);
+            td.appendChild(recommend);
+            recommend.appendChild(profile);
+            recommend.appendChild(text);
+            recommend.appendChild(sb);
+            text.appendChild(name);
+            text.appendChild(depart);
+            text.appendChild(s_num);
+            //sb.appendChild(mapping);
+            sb.appendChild(cancel);
+        }
+        function SRB_Removed(snapshot) {
+            var table = document.getElementById('sentRequestBoard');
+            for (var i = 0; i < table.rows.length; i++) {
+                if (table.rows[i].id === snapshot) {
+                    table.deleteRow(i);
+                }
+            }
+        }
+
+        function setChildValue(index) {
+            location.replace("chatting.html?index=" + index);
+        }
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAINOpROygK44HoqMJCbflrh9sJGDXuBv8",
+            authDomain: "friend-s-friends.firebaseapp.com",
+            databaseURL: "https://friend-s-friends.firebaseio.com",
+            projectId: "friend-s-friends",
+            storageBucket: "friend-s-friends.appspot.com",
+            messagingSenderId: "330666557474"
+        };
+        firebase.initializeApp(config);
+    </script>
+</head>
+<body onload="init()">
+    <div id="up_bar">
+        <img style="padding-bottom : 80px; margin : 0; height : 140px; width : 140px; margin-left : 30px; opacity : 1.0;" src="alarm.png" onclick="goAlarm()"><img src="name.png" style="margin-left: 50px; margin-top: 10px;  width : 550px; height : 280px; opacity: 1.0; " onclick="goHome()">
+        <img style="padding-left : 40px; padding-bottom : 100px; margin : 0; height : 110px; width : 110px; margin-left : 20px; opacity : 1.0;" src="search.png" onclick="goSearch()">
+    </div>
+    <div id=content>
+        <table>
+            <thead>
+                <tr><td><p style="font-size : 30px; font : 45px solid black; font-weight: bolder; margin-left: 40px;">내 친구 목록</p></td></tr>
+            </thead>
+            <tbody id="friendBoard"></tbody>
+        </table>
+        <table>
+            <thead>
+                <tr><td><p style="font-size : 30px; font : 45px solid black; font-weight: bolder; margin-left: 40px;">보낸 친구신청</p></td></tr>
+            </thead>
+            <tbody id="sentRequestBoard"></tbody>
+        </table>
+        <table>
+            <thead>
+                <tr><td><p style="font-size : 30px; font : 45px solid black; font-weight: bolder; margin-left: 40px;">받은 친구신청</p></td></tr>
+            </thead>
+            <tbody id="receivedRequestBoard"></tbody>
+        </table>
+        <!---<div id = "recommend"><!--친구 출력
+                <img id = profile src = dog.jpg>
+                <div id = text>
+                    <div id = name>강지율</div>
+                    <div id = depart>소프트웨어학과</div>
+                    <div id = s_num>201611180</div>
+                </div>
+                <div id = sb>
+                    <button><img style = "margin : 0; width : 100px; height : 100px; opacity: 1.0;" src = chat.png></button>
+                    <button><img style = "margin : 0; width : 100px; height : 100px; opacity: 1.0;" src = add_friend.png></button>
+                </div>
+            </div>-->
+    </div>
+    <footer>
+        <div id=main><img src="home.png" onclick="goHome()"></div>
+        <div id=mapping><img src="mapping.png" onclick="goMapping()"></div>
+        <div id=community><img src="community.png" onclick="goCommu()"></div>
+        <div id=chat><img src="chat.png" onclick="goChat()"></div>
+        <div id=info><img style="margin-left : 50px; opacity : 1.0" src="setting_s.png" onclick="goSet()" ;></div>
+    </footer>
+    <script>
+        function goAlarm() {
+            location.replace('info.html');
+        }
+        function goSearch() {
+            location.replace('search.html');
+        }
+        function goHome() {
+            location.replace('main.html');
+        }
+        function goMapping() {
+            location.replace('mapping.html');
+            //window.location.assign('mapping.html');
+        }
+        function goCommu() {
+            location.replace('community.html');
+        }
+        function goChat() {
+            location.replace('chat.html');
+        }
+        function goSet() {
+            location.replace('setting.html');
+        }
+        function goMy() {
+            location.replace('myinfo.html');
+        }
+        function goFrn() {
+            location.replace('frninfo.html');
+        }
+        function goLec() {
+            location.replace('lecinfo.html');
+        }
+    </script>
+</body>
+</html>

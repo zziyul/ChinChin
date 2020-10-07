@@ -1,0 +1,360 @@
+<html>
+<head>
+  <!--  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />-->
+    <!-- 안드로이드 홈화면추가시 상단 주소창 제거 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" href="/community_s.png">
+    <meta name="theme-color" content="#4898bd">
+
+
+    <!-- ios홈화면추가시 상단 주소창 제거 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="/community_s.png">
+
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+       #up_bar {
+            background-color: #58A8D0;
+            height: 230px;
+            width: 100%;
+        }
+
+        footer {
+            height: 200px;
+            overflow: hidden;
+            position: fixed;
+            bottom: 0px;
+            padding-left: 20px;
+            background-color: white;
+        }
+
+        #main,
+        #mapping,
+        #community,
+        #chat,
+        #info {
+            float: left;
+            height: 200px;
+            width: 188px;
+            border-top: 1px solid #58A8D0;
+        }
+
+        img {
+            height: 80px;
+            width: 80px;
+            margin-left: 60px;
+            margin-top: 60px;
+            opacity: 0.3;
+        }
+
+        article {
+            background-color: #CACACA;
+            margin: 0;
+            padding: 0;
+            height: 1265px;
+            padding-top: 30px;
+        }
+
+        select {
+            margin-top: 70px;
+            margin-left: 155px;
+        }
+
+        #content {
+            background-color: white;
+            border-radius: 20px;
+            margin: 30px;
+            margin-top: 0;
+            height: 1230px;
+        }
+
+        #lecture {
+            width: 650px;
+            height: 200px;
+            background-color: white;
+            border: 0.5px solid black;
+            border-radius: 10px;
+            padding-left: 40px;
+            padding-right: 40px;
+            margin-left: 100px;
+            margin-top: 10px;
+        }
+
+        #text {
+            margin-top: 25px;
+            float: left;
+            font-size: 35px;
+        }
+
+        #lecture {
+            overflow: hidden;
+        }
+
+            #lecture button {
+                margin-top: 40px;
+                width: 100px;
+                height: 100px;
+                float: left;
+                background-color: white;
+                border-radius: 100px;
+            }
+
+        #sb {
+            overflow: hidden;
+            float: right;
+        }
+
+        #inputClass {
+            margin-top: 70px;
+            margin-left: 20px;
+        }
+
+        #unit {
+            margin-top: 30px;
+            height: 1000px;
+            overflow: auto;
+        }
+
+        #btnImg {
+            margin: 0;
+            width: 100px;
+            height: 100px;
+            opacity: 1.0;
+        }
+
+        #l_name {
+            font-size: 50px;
+            font-weight: bold;
+        }
+
+        #l_professor {
+            font-size: 40px;
+        }
+
+        #bt {
+            background-color: #58A8D0;
+            float: left;
+            margin-top: 70px;
+            width: 90px;
+            height: 90px;
+            margin-left: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="up_bar">
+        <img style="padding-bottom : 80px; margin : 0; height : 140px; width : 140px; margin-left : 30px; opacity : 1.0;" src="alarm.png" onclick="goAlarm()"><img src="name.png" style="margin-left: 50px; margin-top: 10px;  width : 550px; height : 280px; opacity: 1.0; " onclick="goHome()">
+        <img style="padding-left : 40px; padding-bottom : 100px; margin : 0; height : 110px; width : 110px; margin-left : 20px; opacity : 1.0;" src="search.png" onclick="goSearch()">
+    </div>s
+    <article>
+        <div id=content>
+            <table>
+                <td>
+                    <select style="height : 80px; font-size : 40px; width : 280px; margin-left : 80px;">
+                        <option value=2017-2>2017-2</option>
+                    </select>
+                </td>
+                <td>
+                    <input id="inputClass" type='text' value='과목명, 과목번호' style="height : 80px;	font-size : 40px; width : 350px; margin-left : 30px; border : 1px solid black;" onfocus="this.value = '';" onmouseout="searchClass()" onkeyup="enter()">
+                </td>
+                <td>
+                    <div id=bt>
+                        <img style="width : 80px; height : 80px; margin : 0; padding : 0; opacity: 1.0" src="search.png" onclick="searchMyName()">
+                    </div>
+                </td>
+            </table>
+
+
+            <div id="unit" onload="showLecture()">
+                <!-- 수업정보가 표시됩니다. -->
+
+
+            </div>
+
+
+        </div>
+    </article>
+    <footer>
+        <div id=main><img src="home.png" onclick="goHome()"></div>
+        <div id=mapping><img src="mapping.png" onclick="goMapping()"></div>
+        <div id=community><img src="community.png" onclick="goCommu()"></div>
+        <div id=chat><img src="chat.png" onclick="goChat()"></div>
+        <div id=info><img style="margin-left : 50px; opacity : 1.0" src="setting_s.png" onclick="goSet()" ;></div>
+    </footer>
+    <script>
+        function goAlarm() {
+            location.replace('info.html');
+        }
+        function goSearch() {
+            location.replace('search.html');
+        }
+        function goHome() {
+            location.replace('main.html');
+        }
+        function goMapping() {
+            location.replace('mapping.html');
+            //window.location.assign('mapping.html');
+        }
+        function goCommu() {
+            location.replace('community.html');
+        }
+        function goChat() {
+            location.replace('chat.html');
+        }
+        function goSet() {
+            location.replace('setting.html');
+        }
+        function goMy() {
+            location.replace('myinfo.html');
+        }
+        function goFrn() {
+            location.replace('frninfo.html');
+        }
+        function goLec() {
+            location.replace('lecinfo.html');
+        }
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.1/firebase.js"></script>
+
+    <script type="text/javascript">
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAINOpROygK44HoqMJCbflrh9sJGDXuBv8",
+            authDomain: "friend-s-friends.firebaseapp.com",
+            databaseURL: "https://friend-s-friends.firebaseio.com",
+            projectId: "friend-s-friends",
+            storageBucket: "friend-s-friends.appspot.com",
+            messagingSenderId: "330666557474"
+        };
+        firebase.initializeApp(config);
+        var database = firebase.database();
+
+        var cookie = sessionStorage.num;// 쿠키에서 학번정보 가져오기
+
+
+        function removeClass(lecNum) { // 과목 삭제
+            console.log(lecNum);
+            database.ref('userInfo/' + cookie + '/lecture/' + lecNum).remove();
+            showLecture();
+        }
+
+        showLecture(); // 먼저 내가 수강한 과목을 출력해준다.
+        function showLecture() {
+
+            //검색결과 다 지우기
+            var element = document.getElementById('unit');
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+
+            //내가 수강한 과목이라는 문구 보영주기
+            var lecResult = document.createElement("div");
+            var inner = "<p style='margin-left: 100px; font-size: 40px;'>내가 수강한 과목</p>";
+            lecResult.innerHTML = inner;
+            document.getElementById('unit').appendChild(lecResult);
+
+            // 등록된 과목 하나씩 읽어서 보여주기
+            database.ref('userInfo/' + cookie + '/lecture').once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    console.log(childSnapshot.key);
+                    reserchlec(childSnapshot.key);
+                });
+            });
+        }
+
+        function reserchlec(lecNum) {  // lecNum에 해당하는 과목을 class 테이블에서 찾아서 보여준다.
+            database.ref('class').once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    if (childSnapshot.key == lecNum) { // 과목번호와 비교
+                        var lecResult = document.createElement("div");//과목정보를 출력할 공간을 만든다.
+                        var inner = " <div id = lecture><div id = text><div id = l_name>" + childSnapshot.val().name + "</div><div id = l_professor>" + childSnapshot.val().prof + "</div><div id = l_num>" + childSnapshot.key + "</div></div><div id = sb><button onclick = 'removeClass(" + childSnapshot.key + ")'><img id = 'btnImg' src = remove.png></button></div></div>";// lecResult에 들어갈 내용을 만든다.
+                        lecResult.innerHTML = inner; // lecResult 안에 넣어준다.
+                        document.getElementById('unit').appendChild(lecResult); //화면에 표시해준다.
+
+                        console.log(childSnapshot.val().name);  //과목명
+                        console.log(childSnapshot.key);         //과목번호
+                        console.log(childSnapshot.val().prof);  //교수명
+                    }
+                });
+            });
+        }
+
+
+        function searchClass() {
+
+            var classInfo = document.getElementById('inputClass').value;//과목번호, 과목명
+
+            //<div id = lecture><!--친구 출력 -->
+            //	<div id = text>
+            //		<div id = l_name>과목명</div>
+            //		<div id = l_professor>교수명</div>
+            //		<div id = l_num>과목 번호</div>
+            //	</div>
+            //	<div id = sb>
+            //		<button><img style = "margin : 0; width : 100px; height : 100px; opacity: 1.0; " src = add_friend.png></button>
+            //	</div>
+            //</div>
+
+
+            //검색결과 다 지우기
+            var element = document.getElementById('unit');
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+
+
+            //과목번호로 검색
+            database.ref('class').once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    if (childSnapshot.key == classInfo) { // 과목번호와 비교
+                        var lecResult = document.createElement("div");//과목정보를 출력할 공간을 만든다.
+                        var inner = " <div id = lecture><div id = text><div id = l_name>" + childSnapshot.val().name + "</div><div id = l_professor>" + childSnapshot.val().prof + "</div><div id = l_num>" + childSnapshot.key + "</div></div><div id = sb><button onclick = 'addClass(" + childSnapshot.key + ")'><img id = 'btnImg' src = add.png></button></div></div>";// lecResult에 들어갈 내용을 만든다.
+                        lecResult.innerHTML = inner; // lecResult 안에 넣어준다.
+                        document.getElementById('unit').appendChild(lecResult); //화면에 표시해준다.
+
+                        console.log(childSnapshot.val().name);	//과목명
+                        console.log(childSnapshot.key);			//과목번호
+                        console.log(childSnapshot.val().prof);	//교수명
+                    }
+                });
+            });
+
+            //과목명으로 검색
+            database.ref('class').once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    if (childSnapshot.val().name == classInfo) { // 과목명과 비교
+                        var lecResult = document.createElement("div");//과목정보를 출력할 공간을 만든다.
+                        var inner = " <div id = lecture><div id = text><div id = l_name>" + childSnapshot.val().name + "</div><div id = l_professor>" + childSnapshot.val().prof + "</div><div id = l_num>" + childSnapshot.key + "</div></div><div id = sb><button onclick = 'addClass(" + childSnapshot.key + ")'><img id = 'btnImg' src = add.png></button></div></div>";// lecResult에 들어갈 내용을 만든다.
+                        lecResult.innerHTML = inner; // lecResult 안에 넣어준다.
+                        document.getElementById('unit').appendChild(lecResult); //화면에 표시해준다.
+
+                        console.log(childSnapshot.val().name);	//과목명
+                        console.log(childSnapshot.key);			//과목번호
+                        console.log(childSnapshot.val().prof);	//교수명
+                    }
+                });
+            });
+        }
+
+        function addClass(classNum) {//과목추가
+            console.log(classNum);
+            database.ref('userInfo/' + cookie + '/lecture/' + classNum).set(' ');
+            alert('과목이 추가되었습니다.');
+        }
+
+        function enter() {
+            if (window.event.keyCode == 13) {
+                // 엔터키가 눌렸을 때 실행할 내용
+                searchClass();
+            }
+        }
+    </script>
+</body>
+</html>

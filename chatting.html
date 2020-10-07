@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />-->
+    <!-- 안드로이드 홈화면추가시 상단 주소창 제거 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" href="/community_s.png">
+    <meta name="theme-color" content="#4898bd">
+
+
+    <!-- ios홈화면추가시 상단 주소창 제거 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="/community_s.png">
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #up_bar {
+            background-color: #58A8D0;
+            height: 230px;
+            width: 100%;
+        }
+
+        footer {
+            height: 200px;
+            overflow: hidden;
+            position: fixed;
+            bottom: 0px;
+            background-color: white;
+            padding-left: 20px;
+        }
+
+        #main,
+        #mapping,
+        #community,
+        #chat,
+        #info {
+            float: left;
+            height: 200px;
+            width: 188px;
+            border-top: 1px solid #58A8D0;
+        }
+
+        img {
+            height: 80px;
+            width: 80px;
+            margin-left: 60px;
+            margin-top: 60px;
+            opacity: 0.3;
+        }
+
+        .container {
+            border: 2px solid #dedede;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 20px 40px;
+        }
+
+        /* Darker chat container */
+        .darker {
+            border-color: #ccc;
+            background-color: #ddd;
+        }
+
+        /* Clear floats */
+        .container::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        /* Style images */
+        .container img {
+            margin: 0;
+            padding: 0;
+            float: left;
+            height: 150px;
+            width: 150px;
+            margin-right: 20px;
+            border-radius: 50%;
+            opacity: 1.0;
+        }
+
+            /* Style the right image */
+            .container img.right {
+                float: right;
+                margin-left: 20px;
+                margin-right: 0;
+            }
+
+        /* Style time text */
+        .time-right {
+            font-size: 30px;
+            float: right;
+            color: #aaa;
+        }
+
+        /* Style time text */
+        .time-left {
+            font-size: 30px;
+            float: left;
+            color: #999;
+        }
+    </style>
+</head>
+
+<body onload="roadChat()">
+    <div id="up_bar">
+        <img style="padding-bottom : 80px; margin : 0; height : 140px; width : 140px; margin-left : 30px; opacity : 1.0;" src="alarm.png" onclick="goAlarm()"><img src="name.png" style="margin-left: 50px; margin-top: 10px;  width : 550px; height : 280px; opacity: 1.0; " onclick="goHome()">
+        <img style="padding-left : 40px; padding-bottom : 100px; margin : 0; height : 110px; width : 110px; margin-left : 20px; opacity : 1.0;" src="search.png" onclick="goSearch()">
+    </div>
+    <div id=chatting>
+        <div class="container">
+        </div>
+
+        <div class="container darker">
+        </div>
+    </div>
+    <div style="background-color: #D5D5D5; width : 100%; height : 90px; position : fixed; bottom : 200px; padding-top : 20px;">
+        <input id=inp type=text style="height : 70px; font-size: 50px; width : 85%; margin-left: 20px; border-radius: 10px; border : 0;">
+        <button onclick="sendChat()" onkeydown="enter()" style="background-color: #D5D5D5; font-size: 50px; color : #58A8D0; border : 0; margin-left: 10px;">작성</button>
+    </div>
+    <footer>
+        <div id=main><img src="home.png" onclick="goHome()"></div>
+        <div id=mapping><img src="mapping.png" onclick="goMapping()"></div>
+        <div id=community><img src="community.png" onclick="goCommu()"></div>
+        <div id=chat><img src="chat_s.png" style="opacity : 1.0;" onclick="goChat()"></div>
+        <div id=info><img src="setting.png" onclick="goSet()" ;></div>
+    </footer>
+    <script>
+        function goAlarm() {
+            location.replace('info.html');
+        }
+        function goSearch() {
+            location.replace('search.html');
+        }
+        function goHome() {
+            location.replace('main.html');
+        }
+        function goMapping() {
+            location.replace('mapping.html');
+            //window.location.assign('mapping.html');
+        }
+        function goCommu() {
+            location.replace('community.html');
+        }
+        function goChat() {
+            location.replace('chat.html');
+        }
+        function goSet() {
+            location.replace('setting.html');
+        }
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.1/firebase.js"></script>
+    <script>
+
+
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAINOpROygK44HoqMJCbflrh9sJGDXuBv8",
+            authDomain: "friend-s-friends.firebaseapp.com",
+            databaseURL: "https://friend-s-friends.firebaseio.com",
+            projectId: "friend-s-friends",
+            storageBucket: "friend-s-friends.appspot.com",
+            messagingSenderId: "330666557474"
+        };
+        firebase.initializeApp(config);
+
+
+        //var database = firebase.database();
+
+        var nnum = sessionStorage.num; //로그인 한사람의 학번
+
+        var who; //대화중인 사람 이름
+        var number;//대화중인사람학번
+
+        function lod() {
+            number = location.href.substr(
+               location.href.lastIndexOf('=') + 1
+           );
+            console.log('number : ' + number);
+        }
+        lod();
+
+        var dt = new Date();
+        function getTimeStamp() {
+            var d = new Date();
+            var s =
+              leadingZeros(d.getFullYear(), 4) + '-' +
+              leadingZeros(d.getMonth() + 1, 2) + '-' +
+              leadingZeros(d.getDate(), 2) + ' ' +
+
+              leadingZeros(d.getHours(), 2) + ':' +
+              leadingZeros(d.getMinutes(), 2);
+
+            return s;
+        }
+
+        function leadingZeros(n, digits) {
+            var zero = '';
+            n = n.toString();
+
+            if (n.length < digits) {
+                for (i = 0; i < digits - n.length; i++)
+                    zero += '0';
+            }
+            return zero + n;
+        }
+        function deletelist() {
+            var item = document.getElementById("chatting");
+            while (item.hasChildNodes()) {
+                item.removeChild(item.firstChild);
+            }
+        }
+        function roadChat() { //채팅 내용 출력
+            deletelist();
+
+            firebase.database().ref('userInfo/').once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    if (childSnapshot.key == number) {
+                        who = childSnapshot.val().name; //이름받아오기
+                        console.log("이름받아오기" + childSnapshot.key + " " + number);
+                        console.log("name " + childSnapshot.val().name + "  " + who);
+                    }
+                });
+            });
+
+
+            //child_added 사용해서 수정해야함
+            firebase.database().ref('chat/' + nnum + '/' + number).once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    /*보낸것 오른쪽*/
+                    if (childSnapshot.val().from == nnum) {
+
+                        var lecResult = document.createElement("div");//과목정보를 출력할 공간을 만든다.
+                        var inner = '<div class="container darker"><img src="dog.jpg" class="right"><p style = "font-size: 40px;">' + childSnapshot.val().text + '</p><span class="time-left">' + childSnapshot.val().time + '</span></div>';
+                        // lecResult에 들어갈 내용을 만든다. //버튼의 아이디가 과목번호이다.
+                        lecResult.innerHTML = inner; // lecResult 안에 넣어준다.
+                        document.getElementById('chatting').appendChild(lecResult); //화면에 표시해준다.
+
+                        //html로 양식에 맞게 출력하면 됨.
+                    }
+                        /*받은것 오른쪽*/
+                    else if (childSnapshot.val().to == nnum) {
+                        console.log("who" + who);
+                        var lecResult = document.createElement("div");//과목정보를 출력할 공간을 만든다.
+                        var inner = '<div class="container"><img src="dog.jpg"><p style = "font-size: 40px;">' + childSnapshot.val().text + '</p><span class="time-right">' + childSnapshot.val().time + '</span><p>' + who + '</p></div>';
+                        // lecResult에 들어갈 내용을 만든다. //버튼의 아이디가 과목번호이다.
+                        lecResult.innerHTML = inner; // lecResult 안에 넣어준다.
+                        document.getElementById('chatting').appendChild(lecResult); //화면에 표시해준다.
+
+                        //html로 양식에 맞게 출력하면 됨.
+                    }
+                });
+            });
+
+        }
+
+
+        function startMove() {
+            var moveTick = function () {
+
+
+                addChat();
+                requestAnimationFrame(moveTick);
+            };
+
+            moveTick();
+        }
+
+        function addChat() { //채팅 내용 출력
+
+            firebase.database().ref('userInfo/').once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    if (childSnapshot.key == number) {
+                        who = childSnapshot.val().name; //이름받아오기
+                        console.log("이름받아오기" + childSnapshot.key + " " + number);
+                        console.log("name " + childSnapshot.val().name + "  " + who);
+                    }
+                });
+            });
+
+
+            //child_added 사용해서 수정해야함
+            firebase.database().ref('chat/' + nnum + '/' + number).once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    /*보낸것 오른쪽*/
+                    if (childSnapshot.val().from == nnum) {
+
+                        var lecResult = document.createElement("div");//과목정보를 출력할 공간을 만든다.
+                        var inner = '<div class="container darker"><img src="dog.jpg" class="right"><p style = "font-size: 40px;">' + childSnapshot.val().text + '</p><span class="time-left">' + childSnapshot.val().time + '</span></div>';
+                        // lecResult에 들어갈 내용을 만든다. //버튼의 아이디가 과목번호이다.
+                        lecResult.innerHTML = inner; // lecResult 안에 넣어준다.
+                        document.getElementById('chatting').appendChild(lecResult); //화면에 표시해준다.
+
+                        //html로 양식에 맞게 출력하면 됨.
+                    }
+                        /*받은것 오른쪽*/
+                    else if (childSnapshot.val().to == nnum) {
+                        console.log("who" + who);
+                        var lecResult = document.createElement("div");//과목정보를 출력할 공간을 만든다.
+                        var inner = '<div class="container"><img src="dog.jpg"><p style = "font-size: 40px;">' + childSnapshot.val().text + '</p><span class="time-right">' + childSnapshot.val().time + '</span><p>' + who + '</p></div>';
+                        // lecResult에 들어갈 내용을 만든다. //버튼의 아이디가 과목번호이다.
+                        lecResult.innerHTML = inner; // lecResult 안에 넣어준다.
+                        document.getElementById('chatting').appendChild(lecResult); //화면에 표시해준다.
+
+                        //html로 양식에 맞게 출력하면 됨.
+                    }
+                });
+            });
+
+        }
+        function sendChat() { //채팅방 내에서 전송 //보내는 사람은 cookie 받는사람은 전달됨.
+            // m_from = document.getElementById('from').value; //
+            // m_to = document.getElementById('to').value;
+            var m_text = document.getElementById('inp').value;
+            var m_time = getTimeStamp();
+            // nnum = "201611222";
+            //console.log(m_to);
+            //console.log(m_text);
+
+
+            var ckey = firebase.database().ref().child('chat').push().key;//key값 저장
+            firebase.database().ref('chat/' + nnum + '/' + number + '/' + ckey).set({
+                from: nnum,
+                to: number,
+                text: m_text, //내용
+                time: m_time,//시간
+            });
+            firebase.database().ref('chat/' + number + '/' + nnum + '/' + ckey).set({
+                from: nnum,
+                to: number,
+                text: m_text, //내용
+                time: m_time,//시간
+            });
+
+            firebase.database().ref('userInfo/' + number + '/alarm').child(nnum).set(sessionStorage.name + '님이 쪽지를 보내셨습니다');
+
+            roadChat();
+            //startMove();
+            //setTimeout(function () { location.reload(); }, 300);//새로고침
+        }
+        function enter() {
+            if (window.event.keyCode == 13) {
+                // 엔터키가 눌렸을 때 실행할 내용
+                sendChat();
+            }
+        }
+    </script>
+</body>
+
+</html>

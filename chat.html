@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />-->
+  
+    <!-- 안드로이드 홈화면추가시 상단 주소창 제거 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" href="/community_s.png">
+    <meta name="theme-color" content="#4898bd">
+
+
+    <!-- ios홈화면추가시 상단 주소창 제거 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="/community_s.png">
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #up_bar {
+            background-color: #58A8D0;
+            height: 230px;
+            width: 100%;
+        }
+
+        footer {
+            height: 200px;
+            overflow: hidden;
+            position: fixed;
+            bottom: 0px;
+            background-color: white;
+            padding-left: 20px;
+        }
+
+        #main,
+        #mapping,
+        #community,
+        #chat,
+        #info {
+            float: left;
+            height: 200px;
+            width: 188px;
+            border-top: 1px solid #58A8D0;
+        }
+
+        img {
+            height: 80px;
+            width: 80px;
+            margin-left: 60px;
+            margin-top: 60px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body onload="chatRoom()">
+    <div id="up_bar">
+        <img style="padding-bottom : 80px; margin : 0; height : 140px; width : 140px; margin-left : 30px; opacity : 1.0;" src="alarm.png" onclick="goAlarm()"><img src="name.png" style="margin-left: 50px; margin-top: 10px;  width : 550px; height : 280px; opacity: 1.0; " onclick="goHome()">
+        <img style="padding-left : 40px; padding-bottom : 100px; margin : 0; height : 110px; width : 110px; margin-left : 20px; opacity : 1.0;" src="search.png" onclick="goSearch()">
+    </div>
+    <article>
+        <div style="padding: 65px;" id=content>
+            <p style=" font-size: 60px; text-align: center; margin-bottom: 40px; margin-top : 40px;"><span id="names" style=" font-weight: bold;"></span>님의 채팅</p>
+            <div id="rchat">
+            </div>
+
+
+        </div>
+    </article>
+    <footer>
+        <div id=main><img src="home.png" onclick="goHome()"></div>
+        <div id=mapping><img src="mapping.png" onclick="goMapping()"></div>
+        <div id=community><img src="community.png" onclick="goCommu()"></div>
+        <div id=chat><img src="chat_s.png" style="opacity : 1.0;" onclick="goChat()"></div>
+        <div id=info><img src="setting.png" onclick="goSet()" ;></div>
+    </footer>
+
+    <script>
+        function goAlarm() {
+            location.replace('info.html');
+        }
+        function goSearch() {
+            location.replace('search.html');
+        }
+        function goHome() {
+            location.replace('main.html');
+        }
+        function goMapping() {
+            location.replace('mapping.html');
+            //window.location.assign('mapping.html');
+        }
+        function goCommu() {
+            location.replace('community.html');
+        }
+        function goChat() {
+            location.replace('chat.html');
+        }
+        function goSet() {
+            location.replace('setting.html');
+        }
+        function goChatting() {
+            location.replace('chatting.html');
+        }
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.1/firebase.js"></script>
+    <script>
+
+
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAINOpROygK44HoqMJCbflrh9sJGDXuBv8",
+            authDomain: "friend-s-friends.firebaseapp.com",
+            databaseURL: "https://friend-s-friends.firebaseio.com",
+            projectId: "friend-s-friends",
+            storageBucket: "friend-s-friends.appspot.com",
+            messagingSenderId: "330666557474"
+        };
+        firebase.initializeApp(config);
+
+
+        //var database = firebase.database();
+
+        var nnum = sessionStorage.num; //로그인 한사람의 학번
+        console.log(nnum);
+
+        function chatRoom() {//채팅방 리스트 출력
+            //nnum = "201611222";
+            deletelist();
+            var who;
+            
+            firebase.database().ref('chat/' + nnum).once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    var kkey=childSnapshot.key;//
+                    console.log("key"+childSnapshot.key); //key값이 대화방 이름
+                    firebase.database().ref('userInfo/').once('value', function (snapshot) {
+                        snapshot.forEach(function (childSnapshot) {
+                            if (childSnapshot.key == kkey) {
+                                who = childSnapshot.val().name;
+                                console.log("같아?"+childSnapshot.key+" "+who);
+
+                                 var lecResult = document.createElement("span");//과목정보를 출력할 공간을 만든다.
+                                var inner = '<table style="display : inline; margin-left: 50px; margin-left : 50px; padding-top : 50px; " onclick="setChildValue(' + kkey + ')"><tr><td><img src="dog.jpg" style="width : 150px; height : 150px; border-radius: 150px; opacity : 1.0; margin : 30px; margin-bottom : 20px;padding : 0;"></td></tr><tr><td style="text-align : center; font-size: 30px;">' + who + '</td></tr></table>';
+                                // lecResult에 들어갈 내용을 만든다. //버튼의 아이디가 과목번호이다.
+                                lecResult.innerHTML = inner; // lecResult 안에 넣어준다.
+                                document.getElementById('rchat').appendChild(lecResult); //화면에 표시해준다.
+
+                            }
+                        });
+                    });
+                    //childSnapshot.key를 html로 양식에 맞게 출력하면 됨.
+                       
+                });
+            });
+
+            firebase.database().ref('userInfo/' + nnum).once('value', function (snapshot) { // DB에서 내 정보 가져오기
+                console.log(snapshot.val());
+                document.getElementById('names').innerHTML= snapshot.val().name;
+            });
+
+
+        }
+
+        function deletelist() {
+            var item = document.getElementById("rchat");
+            while (item.hasChildNodes()) {
+                item.removeChild(item.firstChild);
+            }
+        }
+        function setChildValue(index) {
+            location.replace("chatting.html?index=" + index);
+        }
+    </script>
+</body>
+</html>

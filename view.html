@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />-->
+    <!-- 안드로이드 홈화면추가시 상단 주소창 제거 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" href="/community_s.png">
+    <meta name="theme-color" content="#4898bd">
+
+
+    <!-- ios홈화면추가시 상단 주소창 제거 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="/community_s.png">
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+#up_bar {
+            background-color: #58A8D0;
+            height: 230px;
+            width: 100%;
+        }
+
+        footer {
+            height: 200px;
+            overflow: hidden;
+            position: fixed;
+            bottom: 0px;
+            background-color: white;
+            padding-left: 20px;
+        }
+
+        #main, #mapping, #community, #chat, #info {
+            float: left;
+            height: 200px;
+            width: 188px;
+            border-top: 1px solid #58A8D0;
+        }
+
+        img {
+            height: 80px;
+            width: 80px;
+            margin-left: 60px;
+            margin-top: 60px;
+            opacity: 0.3;
+        }
+
+        #content {
+            background-color: white;
+            margin: 0;
+            padding: 0;
+            height: 1215px;
+        }
+    </style>
+</head>
+<body onload="roadPosts()">
+    <div id="up_bar">
+        <img style="padding-bottom : 80px; margin : 0; height : 140px; width : 140px; margin-left : 30px; opacity : 1.0;" src="alarm.png" onclick="goAlarm()"><img src="name.png" style="margin-left: 50px; margin-top: 10px;  width : 550px; height : 280px; opacity: 1.0; " onclick="goHome()">
+        <img style="padding-left : 40px; padding-bottom : 100px; margin : 0; height : 110px; width : 110px; margin-left : 20px; opacity : 1.0;" src="search.png" onclick="goSearch()">
+    </div>
+    <div id=content>
+        <div style="background-color: white; padding-top: 30px;">
+                <div style="font-weight: bolder; font-size: 50px; margin-left: 20px;"><span id="subject" style="font-size: 10px; color : #D5D5D5; font-size: 20px;"></span><span id="title" style = "font-size : 60px;"></span>		<img src=back.png style="margin : 0; padding : 0; float : right;"></div>
+                <div id=writer style=" font-size: 30px; margin-left: 20px; margin-top: 10px;"></div>
+                <div id=text style="font-size: 45px; margin-left: 20px; margin-top : 10px;"></div>
+                <br /><hr />
+            <div id=comments style = "overflow : auto; height:900px;">
+                
+            </div>
+        </div>
+    </div>
+    <div style="background-color: #D5D5D5; width : 100%; height : 60px; position : fixed; bottom : 200px; padding-top : 20px; padding-botttom : 20px; padding-left : 20px;">
+        <input id="anony" type=checkbox checked="on" style="width: 50px; height : 50px; color : #58A8D0;"><span style="font-size : 40px;">익명</span>
+        <input id="eotrmf" type=text value=" " style="height : 80px; font-size: 50px; width : 65%; margin-left: 20px; border-radius: 10px; border : 0;">
+        <button onclick="writeComment()" style="background-color: #D5D5D5; font-size: 50px; color : #58A8D0; border : 0; margin-left: 10px;">작성</button>
+    </div>
+    <footer>
+        <div id=main><img src="home.png" onclick="goHome()"></div>
+        <div id=mapping><img src="mapping.png" onclick="goMapping()"></div>
+        <div id=community><img src="community_s.png" style="opacity : 1.0;" onclick="goCommu()"></div>
+        <div id=chat><img src="chat.png" onclick="goChat()"></div>
+        <div id=info><img src="setting.png" onclick="goSet()" ;></div>
+    </footer>
+    <script>
+        function goAlarm() {
+            location.replace('info.html');
+        }
+        function goSearch() {
+            location.replace('search.html');
+        }
+        function goHome() {
+            location.replace('main.html');
+        }
+        function goMapping() {
+            location.replace('mapping.html');
+            //window.location.assign('mapping.html');
+        }
+        function goCommu() {
+            location.replace('community.html');
+        }
+        function goChat() {
+            location.replace('chat.html');
+        }
+        function goSet() {
+            location.replace('setting.html');
+        }
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.1/firebase.js"></script>
+    <script>
+
+
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAINOpROygK44HoqMJCbflrh9sJGDXuBv8",
+            authDomain: "friend-s-friends.firebaseapp.com",
+            databaseURL: "https://friend-s-friends.firebaseio.com",
+            projectId: "friend-s-friends",
+            storageBucket: "friend-s-friends.appspot.com",
+            messagingSenderId: "330666557474"
+        };
+        firebase.initializeApp(config);
+
+
+        //var database = firebase.database();
+
+        var nnum = sessionStorage.num; //로그인 한사람의 학번
+        var number;//게시글 고유번호
+
+        function lod() {
+            number = location.href.substr(
+               location.href.lastIndexOf('=') + 1
+           );
+            console.log('number : ' + number);
+        }
+        lod();
+
+        function roadPosts() { //게시글 보기+댓글
+            /*게시글 출력*/
+            var p_id;
+            var p_anony = " ";
+            var c_id;
+            var c_anony;
+            deletelist();
+            console.log("2");
+            firebase.database().ref('posts').once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    console.log("1");
+                    if (childSnapshot.val().code == number) {
+                        //p_time = childSnapshot.val().time;
+
+                        p_anony = childSnapshot.val().anony;
+                        if (p_anony == false)//익명이면
+
+                        p_id = childSnapshot.val().id;//작성자                        
+                    
+                    else 
+                        p_id = "익명"; //작성자
+                    
+                        
+                        console.log(childSnapshot.val().subNum);
+                        console.log(childSnapshot.val().title);
+                        console.log(p_id);
+                        console.log(childSnapshot.val().contents);
+
+                        document.getElementById("subject").innerHTML = '['+childSnapshot.val().subNum+']';
+                        document.getElementById("title").innerHTML = childSnapshot.val().title;
+                        document.getElementById("writer").innerHTML = p_id;
+                        document.getElementById("text").innerHTML = childSnapshot.val().contents;
+
+                    }
+                });
+            });
+            /*댓글 출력*/
+            firebase.database().ref('comment').once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    if (childSnapshot.val().code == number) {
+                        var c_anony = childSnapshot.val().anony;
+                        console.log(c_anony);
+
+                        if (c_anony == true)//익명이면
+                            c_id = "익명"; //작성자
+                        else if (c_anony == false)
+                            c_id = childSnapshot.val().id;//작성자
+                        else
+                            c_id = "익명(글쓴이)";
+                            
+
+
+                        var lecResult = document.createElement("div");//과목정보를 출력할 공간을 만든다.
+                        var inner = '<div style = "padding-top: 20px; padding-bottom: 20px;"> <div id = commenter style = "font-size : 33px; font-weight: bold; margin-left: 40px; padding-bottom: 15px;">' + c_id + '</div> <div id = comment style = "font-size : 38px; margin-left: 40px;">' + childSnapshot.val().contents + '</div> </div>';
+                        // lecResult에 들어갈 내용을 만든다. //버튼의 아이디가 과목번호이다.
+                        lecResult.innerHTML = inner; // lecResult 안에 넣어준다.
+                        document.getElementById('comments').appendChild(lecResult); //화면에 표시해준다.
+                        //document.getElementById('comments').appendChild(lecResult);
+                    }
+
+
+                });
+            });
+        }
+        function deletelist() {
+            var item = document.getElementById("comments");
+            while (item.hasChildNodes()) {
+                item.removeChild(item.firstChild);
+            }
+        }
+
+        var dt = new Date();
+        function getTimeStamp() {
+            var d = new Date();
+            var s =
+              leadingZeros(d.getFullYear(), 4) + '-' +
+              leadingZeros(d.getMonth() + 1, 2) + '-' +
+              leadingZeros(d.getDate(), 2) + ' ' +
+
+              leadingZeros(d.getHours(), 2) + ':' +
+              leadingZeros(d.getMinutes(), 2);
+
+            return s;
+        }
+        function leadingZeros(n, digits) {
+            var zero = '';
+            n = n.toString();
+
+            if (n.length < digits) {
+                for (i = 0; i < digits - n.length; i++)
+                    zero += '0';
+            }
+            return zero + n;
+        }
+
+        var c_anony;//댓글익명 0 : 익명X 1:익명 2 :작성자 본인
+        var c_time;//댓글 시간
+        var c_contents;//댓글내용
+        function writeComment() { //댓글 작성 
+
+            c_contents = document.getElementById('eotrmf').value; 
+            c_time = getTimeStamp();
+            c_anony = document.getElementById('anony').checked; //익명 생기면
+            //var p_num = firebase.database().ref().child('comment').push().key;
+            console.log("n"+number);
+            firebase.database().ref('posts/'+number+'/').once('value', function(snapshot) {
+                snapshot.forEach(function(childSnapshot) {
+                    console.log("id"+nnum+" "+childSnapshot.val().id );
+                    if (childSnapshot.val().anony == true && nnum == childSnapshot.val().id) {
+                        c_anony = "3";
+                        console.log(nnum+" ==" + childSnapshot.val().id);
+                        console.log("글쓴이 3");
+                    }
+                });
+            });
+
+            console.log("eotrmf _"+c_contents);
+
+            var p_num = firebase.database().ref().child('comment').push().key;
+            firebase.database().ref('comment/' + p_num).set({
+                code: number, //게시글 고유번호
+                contents: c_contents,
+                id: nnum, //작성자
+                anony : c_anony, //익명 체크 //0:익명아님 1: 익명 2: 작성자 본인
+                time : c_time
+            });
+            roadPosts();
+        }
+    </script>
+</body>
+</html>

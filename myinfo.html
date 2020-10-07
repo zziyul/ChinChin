@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />-->
+    <!-- 안드로이드 홈화면추가시 상단 주소창 제거 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" href="/community_s.png">
+    <meta name="theme-color" content="#4898bd">
+
+
+    <!-- ios홈화면추가시 상단 주소창 제거 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="/community_s.png">
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #up_bar {
+            background-color: #58A8D0;
+            height: 230px;
+            width: 100%;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        footer {
+            height: 200px;
+            overflow: hidden;
+            position: fixed;
+            bottom: 0px;
+            background-color: white;
+            padding-left: 20px;
+        }
+
+        #main,
+        #mapping,
+        #community,
+        #chat,
+        #info {
+            float: left;
+            height: 200px;
+            width: 188px;
+            border-top: 1px solid #58A8D0;
+        }
+
+        img {
+            height: 80px;
+            width: 80px;
+            margin-left: 60px;
+            margin-top: 60px;
+            opacity: 0.3;
+        }
+
+        #content {
+            background-color: #D5D5D5;
+            height: 1295px;
+            margin: 0;
+            padding: 0;
+        }
+
+        td {
+            color: #747474;
+            font-size: 40px;
+            width: 330px;
+            height: 120px;
+            padding-bottom: 30px;
+            background-color: white;
+            padding-left: 35px;
+            padding-right: 40px;
+        }
+
+        input {
+            height: 40px;
+            font-size: 40px;
+            width: 300px;
+            border: none;
+            border-bottom: 2px solid #D5D5D5;
+        }
+
+        table {
+            padding-top: 50px;
+            margin-left: 80px;
+            border-radius: 20px;
+        }
+
+        button {
+            text-decoration: none;
+            background-color: white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="up_bar">
+        <img style="padding-bottom : 80px; margin : 0; height : 140px; width : 140px; margin-left : 30px; opacity : 1.0;" src="alarm.png" onclick="goAlarm()"><img src="name.png" style="margin-left: 50px; margin-top: 10px;  width : 550px; height : 280px; opacity: 1.0; " onclick="goHome()">
+        <img style="padding-left : 40px; padding-bottom : 100px; margin : 0; height : 110px; width : 110px; margin-left : 20px; opacity : 1.0;" src="search.png" onclick="goSearch()">
+    </div>
+
+    <div id=content>
+        <table>
+            <tr>
+                <td><b>이메일</b></td>
+                <td>
+                    <p id="email" style="font-size : 30px; margin-left : 30px;"></p>
+                </td>
+            </tr>
+            <tr>
+                <td><b>현재 비밀번호</b></td>
+                <td>
+                    &nbsp;&nbsp;<input type=password id="cPassword" value=wwww onfocus="this.select()" onfocusout="checkCPW()">
+                    <p id="checkCPWMessage" style="font-size: 30px; width : 300px; height : 30px; padding-left: 20px;">비밀번호확인</p>
+                </td>
+            </tr>
+            <tr>
+                <td><b>새 비밀번호</b></td>
+                <td>&nbsp;&nbsp;<input type=password id="password" value=wwww onfocus="this.select()" onfocusout="checkPW()"></td>
+            </tr>
+            <tr>
+                <td><b>새 비밀번호 확인</b></td>
+                <td>
+                    &nbsp;&nbsp;<input type=password id="passwordCheck" value=wwww onfocus="this.select()" onfocusout="checkPW()">
+                    <p id="checkMessage" style="font-size: 30px; width : 120px; height : 30px; padding-left: 20px;">중복체크</p>
+                </td>
+            </tr>
+            <tr>
+                <td><b>이름</b></td>
+                <td>
+                    &nbsp;&nbsp;
+                    <p id="name" style="font-size : 30px; margin-left : 30px;"></p>
+                </td>
+            </tr>
+            <tr>
+                <td><b>학과</b></td>
+                <td>
+                    <p id="major" style="font-size : 30px; margin-left : 30px;"></p>
+                </td>
+            </tr>
+            <tr>
+                <td><b>학번</b></td>
+                <td>
+                    &nbsp;&nbsp;
+                    <p id="num" style="font-size : 30px; margin-left : 30px;"></p>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <button onclick="modifyInfo()" style="width : 200px; height : 100px; color : white; border-radius: 20px; background-color: #58A8D0; margin-left : 370px; margin-top: 30px;"><p style="font-size: 50px;"><b>수정</b></p></button>
+    </div>
+    <footer>
+        <div id=main><img src="home.png" onclick="goHome()"></div>
+        <div id=mapping><img src="mapping.png" onclick="goMapping()"></div>
+        <div id=community><img src="community.png" onclick="goCommu()"></div>
+        <div id=chat><img src="chat.png" onclick="goChat()"></div>
+        <div id=info><img style="margin-left : 50px; opacity : 1.0" src="setting_s.png" onclick="goSet()" ;></div>
+    </footer>
+    <script>
+        function goAlarm() {
+            location.replace('info.html');
+        }
+        function goSearch() {
+            location.replace('search.html');
+        }
+        function goHome() {
+            location.replace('main.html');
+        }
+        function goMapping() {
+            location.replace('mapping.html');
+            //window.location.assign('mapping.html');
+        }
+        function goCommu() {
+            location.replace('community.html');
+        }
+        function goChat() {
+            location.replace('chat.html');
+        }
+        function goSet() {
+            location.replace('setting.html');
+        }
+        function goMy() {
+            location.replace('myinfo.html');
+        }
+        function goFrn() {
+            location.replace('frninfo.html');
+        }
+        function goLec() {
+            location.replace('lecinfo.html');
+        }
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.1/firebase.js"></script>
+
+    <script type="text/javascript">
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAINOpROygK44HoqMJCbflrh9sJGDXuBv8",
+            authDomain: "friend-s-friends.firebaseapp.com",
+            databaseURL: "https://friend-s-friends.firebaseio.com",
+            projectId: "friend-s-friends",
+            storageBucket: "friend-s-friends.appspot.com",
+            messagingSenderId: "330666557474"
+        };
+        firebase.initializeApp(config);
+        var database = firebase.database();
+
+        var nnum = sessionStorage.num; // 로그인 된 회원의 학번
+        console.log(nnum);
+        var m_name; //화원이름
+        var m_num; // 회원 학번
+        var m_major; // 회원 전공
+        var m_password; //비밀전호
+        var m_mail; //메일
+        var CPWcheck = false; //현재 비밀번호가 맞으면 true
+        var PWcheck = false; //새 비밀번호가 맞으면 true
+        var inputPW;//  최종적으로 들어갈 비밀번호
+
+        database.ref('userInfo').once('value', function (snapshot) { // DB에서 내 정보 가져오기
+            snapshot.forEach(function (childSnapshot) {
+                if (childSnapshot.val().num == nnum) {
+                    m_name = childSnapshot.val().name;
+                    m_num = childSnapshot.val().num;
+                    m_major = childSnapshot.val().major;
+                    m_password = childSnapshot.val().password;
+                    m_mail = childSnapshot.val().mail;
+
+                    document.getElementById('name').innerHTML = m_name;
+                    document.getElementById('num').innerHTML = m_num;
+                    document.getElementById('major').innerHTML = m_major;
+                    document.getElementById('email').innerHTML = m_mail;
+                }
+
+            });
+        });
+
+        function checkCPW() { // 현재 비밀번호가 맞는지 확인한다.
+            database.ref('userInfo/' + nnum + '/password').once('value', function (snapshot) {
+                console.log(snapshot.val());
+                if (snapshot.val() == document.getElementById('cPassword').value) {
+                    document.getElementById('checkCPWMessage').innerHTML = '확인완료';
+                    CPWcheck = true;
+                } else {
+                    document.getElementById('checkCPWMessage').innerHTML = '비밀번호를 확인하세요';
+                }
+            });
+        }
+
+        function checkPW() { //비번이 비번확인과 같은지 확인하는 함수
+            var t_password = document.getElementById('password').value;
+            var t_passwordCheck = document.getElementById('passwordCheck').value;
+
+            if (t_password == t_passwordCheck) {
+                document.getElementById('checkMessage').innerHTML = '일치함';
+                PWcheck = true;
+                inputPW = t_passwordCheck;
+            } else
+                document.getElementById('checkMessage').innerHTML = '불일치';
+
+
+        }
+
+        function modifyInfo() { // 수정확정
+            if (CPWcheck == true && PWcheck == true)
+                database.ref('userInfo/' + nnum + '/password').set(inputPW);
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />-->
+    <!-- 안드로이드 홈화면추가시 상단 주소창 제거 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" href="/community_s.png">
+    <meta name="theme-color" content="#4898bd">
+
+
+    <!-- ios홈화면추가시 상단 주소창 제거 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="/community_s.png">
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #up_bar {
+            background-color: #58A8D0;
+            height: 230px;
+            width: 100%;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        footer {
+            height: 200px;
+            overflow: hidden;
+            position: fixed;
+            bottom: 0px;
+            background-color: white;
+            padding-left: 20px;
+        }
+
+        #main, #mapping, #community, #chat, #info {
+            float: left;
+            height: 200px;
+            width: 188px;
+            border-top: 1px solid #58A8D0;
+        }
+
+        img {
+            height: 80px;
+            width: 80px;
+            margin-left: 60px;
+            margin-top: 60px;
+            opacity: 0.3;
+        }
+
+        #content {
+            background-color: #D5D5D5;
+            padding-top: 80px;
+            height: 1185px;
+        }
+
+        table {
+            background-color: white;
+            border-radius: 30px;
+            width: 800px;
+            margin: 0 auto;
+        }
+
+        td {
+            height: 110px;
+            font-size: 45px;
+            font-weight: bold;
+            padding-left: 40px;
+            border-bottom: 1px solid #CACACA;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div id="up_bar">
+        <img style="padding-bottom : 80px; margin : 0; height : 140px; width : 140px; margin-left : 30px; opacity : 1.0;" src="alarm.png" onclick="goAlarm()"><img src="name.png" style="margin-left: 50px; margin-top: 10px;  width : 550px; height : 280px; opacity: 1.0; " onclick="goHome()">
+        <img style="padding-left : 40px; padding-bottom : 100px; margin : 0; height : 110px; width : 110px; margin-left : 20px; opacity : 1.0;" src="search.png" onclick="goSearch()">
+    </div>
+    <div id=content>
+        <table>
+            <tr><td onclick="goMy()">내 정보</td></tr>
+            <tr><td onclick="goFrn()">친구 정보</td></tr>
+            <tr><td onclick="goLec()">수업 정보</a></td></tr>
+            <tr><td>커뮤니티 이용규칙</td></tr>
+            <tr><td>개인 정보 처리 방침</td></tr>
+            <tr><td onclick="goIndex()">로그아웃</td></tr>
+            <tr><td>회원 탈퇴</td></tr>
+        </table>
+    </div>
+    <footer>
+        <div id=main><img src="home.png" onclick="goHome()"></div>
+        <div id=mapping><img src="mapping.png" onclick="goMapping()"></div>
+        <div id=community><img src="community.png" onclick="goCommu()"></div>
+        <div id=chat><img src="chat.png" onclick="goChat()"></div>
+        <div id=info><img style="margin-left : 50px; opacity : 1.0" src="setting_s.png" onclick="goSet()" ;></div>
+    </footer>
+    <script>
+        function goAlarm() {
+            location.replace('info.html');
+        }
+        function goSearch() {
+            location.replace('search.html');
+        }
+        function goHome() {
+            location.replace('main.html');
+        }
+        function goMapping() {
+            location.replace('mapping.html');
+            //window.location.assign('mapping.html');
+        }
+        function goCommu() {
+            location.replace('community.html');
+        }
+        function goChat() {
+            location.replace('chat.html');
+        }
+        function goSet() {
+            location.replace('setting.html');
+        }
+        function goMy() {
+            location.replace('myinfo.html');
+        }
+        function goFrn() {
+            location.replace('frninfo.html');
+        }
+        function goLec() {
+            location.replace('lecinfo.html');
+        }
+        function goIndex() {
+            location.replace('index.html');
+        }
+    </script>
+</body>
+</html>

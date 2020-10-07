@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+   <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />-->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" href="/community_s.png">
+    <meta name="theme-color" content="#4898bd">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="/community_s.png">
+
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #up_bar {
+            background-color: #58A8D0;
+            height: 230px;
+            width: 100%;
+        }
+
+        footer {
+            height: 200px;
+            overflow: hidden;
+            position: fixed;
+            bottom: 0px;
+            background-color : white;
+            padding-left: 20px;
+        }
+
+        #main, #mapping, #community, #chat, #info {
+            float: left;
+            height: 200px;
+            width: 188px;
+            border-top: 1px solid #58A8D0;
+        }
+
+        img {
+            height: 80px;
+            width: 80px;
+            margin-left: 60px;
+            margin-top: 60px;
+            opacity: 0.3;
+        }
+
+        article {
+            background-color: #D5D5D5;
+            height: 1235px;
+            padding-top: 10px;
+        }
+
+        #content {
+            background-color: white;
+            margin: 10px;
+            height: 1225px;
+        }
+
+        #select {
+            height: 100px;
+        }
+
+        #recommend {
+            width: 900px;
+            height: 180px;
+            background-color: white;
+            border: 1px solid black;
+            border-radius: 30px;
+            margin-top : 30px;
+            margin-left : 30px;
+            
+        }
+
+        #profile {
+            float: left;
+            width: 130px;
+            height: 130px;
+            margin: 25px;
+            opacity: 1.0;
+        }
+
+        #text {
+            margin-top: 25px;
+            float: left;
+            font-size: 35px;
+        }
+
+        #recommend {
+            overflow: hidden;
+        }
+
+            #recommend button {
+                margin-top: 30px;
+                width: 130px;
+                height: 130px;
+                float: left;
+                background-color: #D5D5D5;
+                border-radius: 120px;
+            }
+
+        #bt {
+            background-color: #58A8D0;
+            width: 80px;
+            height: 85px;
+            margin: 0;
+            padding: 0;
+        }
+
+        #sb {
+            overflow: hidden;
+            float: right;
+            margin-right: 30px;
+        }
+
+        label {
+            background-color: #58A8D0;
+            padding: 10px 15px;
+            margin: 0;
+            color: white;
+            font-size: 50px;
+            font-weight: bold;
+            border-radius: 20px 20px 0 0;
+        }
+
+        input[type=radio] {
+            display: none;
+        }
+
+            input[type=radio]:checked + label {
+                background-color: white;
+                color: #58A8D0;
+                font-weight: bold;
+                border: 3px solid #58A8D0;
+            }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/4.7.0/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAINOpROygK44HoqMJCbflrh9sJGDXuBv8",
+            authDomain: "friend-s-friends.firebaseapp.com",
+            databaseURL: "https://friend-s-friends.firebaseio.com",
+            projectId: "friend-s-friends",
+            storageBucket: "friend-s-friends.appspot.com",
+            messagingSenderId: "330666557474"
+        };
+        firebase.initializeApp(config);
+
+
+       
+
+
+        // 채팅방으로 이동
+        function select_c(id) {
+            console.log(id);
+            firebase.database().ref('chat/' + myId).once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    console.log(childSnapshot.key);
+                    if (childSnapshot.key == id) { //기존에 있으면
+                        setChildValue(id);
+
+                    }
+                    else {
+                        addroom(id); //없으면 채팅방 만들기
+                        setChildValue(id); //그리고 이동
+                    }
+                });
+            });
+        }
+        function addroom(id) { //채팅방 추가
+
+            firebase.database().ref('chat/' + myId + '/' + id + '/chatroom').set({
+                chatroom: "채팅방 생성"
+            });
+        }
+
+        function setChildValue(index) {
+            location.replace("chatting.html?index=" + index);
+        }
+    </script>
+
+    <script src="src/sigma.core.js"></script>
+    <script src="src/conrad.js"></script>
+    <script src="src/utils/sigma.utils.js"></script>
+    <script src="src/utils/sigma.polyfills.js"></script>
+    <script src="src/sigma.settings.js"></script>
+    <script src="src/classes/sigma.classes.dispatcher.js"></script>
+    <script src="src/classes/sigma.classes.configurable.js"></script>
+    <script src="src/classes/sigma.classes.graph.js"></script>
+    <script src="src/classes/sigma.classes.camera.js"></script>
+    <script src="src/classes/sigma.classes.quad.js"></script>
+    <script src="src/classes/sigma.classes.edgequad.js"></script>
+    <script src="src/captors/sigma.captors.mouse.js"></script>
+    <script src="src/captors/sigma.captors.touch.js"></script>
+    <script src="src/renderers/sigma.renderers.canvas.js"></script>
+    <script src="src/renderers/canvas/sigma.canvas.labels.def.js"></script>
+    <script src="src/renderers/canvas/sigma.canvas.hovers.def.js"></script>
+    <script src="src/renderers/canvas/sigma.canvas.nodes.def.js"></script>
+    <script src="src/renderers/canvas/sigma.canvas.edges.def.js"></script>
+    <script src="src/renderers/canvas/sigma.canvas.edges.arrow.js"></script>
+    <script src="src/renderers/canvas/sigma.canvas.edgehovers.def.js"></script>
+    <script src="src/renderers/canvas/sigma.canvas.edgehovers.curve.js"></script>
+    <script src="src/renderers/canvas/sigma.canvas.edgehovers.arrow.js"></script>
+    <script src="src/renderers/canvas/sigma.canvas.edgehovers.curvedArrow.js"></script>
+    <script src="src/renderers/canvas/sigma.canvas.extremities.def.js"></script>
+    <script src="src/middlewares/sigma.middlewares.rescale.js"></script>
+    <script src="src/middlewares/sigma.middlewares.copy.js"></script>
+    <script src="src/misc/sigma.misc.animation.js"></script>
+    <script src="src/misc/sigma.misc.bindEvents.js"></script>
+    <script src="src/misc/sigma.misc.bindDOMEvents.js"></script>
+    <script src="src/misc/sigma.misc.drawHovers.js"></script>
+    <script src="plugins/sigma.parsers.json/sigma.parsers.json.js"></script>
+    <script>
+        var myId;
+        var map;
+        var bool = false;
+        // 이 코드를 스파게티로 만든 주범. 동기화과정에 사용된다.
+        // 무슨 오류가 난다면 일단 이 변수를 의심하라
+        var depth;
+        var resultBoard;
+        function init() {
+            myId = sessionStorage.num;
+            //myId = '201611187';
+            map = document.getElementById('map');
+            depth = 1;
+            resultBoard = document.getElementById('resultBoard');
+        }
+        function RB_Init() {
+            while (resultBoard.rows.length !== 0) {
+                resultBoard.deleteRow(0);
+            }
+        }
+        function RB_Added(snapshot) {
+            var tr = document.createElement('tr');
+            tr.id = snapshot;
+            var td = document.createElement('td');
+            var recommend = document.createElement('div');
+            recommend.id = 'recommend';
+            // 프로필 사진 파트
+            var profile = document.createElement('img');
+            profile.id = 'profile';
+            profile.src = 'dog.jpg';
+            // 유저 정보 파트
+            var text = document.createElement('div');
+            text.id = 'text';
+            var name = document.createElement('div');
+            name.id = 'name';
+            var nameval;
+            firebase.database().ref('userInfo/' + snapshot + '/name').once('value', function (childsnapshot) {
+                nameval = childsnapshot.val();
+            }).then(function () {
+                name.appendChild(document.createTextNode(nameval));
+            });
+            var depart = document.createElement('div');
+            depart.id = 'depart';
+            var departval;
+            firebase.database().ref('userInfo/' + snapshot + '/major').once('value', function (childsnapshot) {
+                departval = childsnapshot.val();
+            }).then(function () {
+                depart.appendChild(document.createTextNode(departval));
+            });
+            var s_num = document.createElement('div');
+            s_num.id = 's_num';
+            s_num.appendChild(document.createTextNode(snapshot));
+            // 버튼 파트
+            var sb = document.createElement('div');
+            sb.id = 'sb';
+            var chat = document.createElement('button');
+            var chatImg = document.createElement('img');
+            chatImg.onload = function () {
+                chatImg.style.margin = 0;
+                chatImg.style.width = '100px';
+                //chatImg.sytle.height = '100px';
+                chatImg.style.opacity = 1.0;
+                chat.appendChild(chatImg);
+            };
+            chatImg.src = 'chat.png';
+            chat.onclick = function () {
+                // 쪽지$$
+                select_c(tr.id)
+            };
+            var send = document.createElement('button');
+            var sendImg = document.createElement('img');
+            sendImg.onload = function () {
+                sendImg.style.margin = 0;
+                sendImg.style.width = '100px';
+                //sendImg.sytle.height = '100px';
+                sendImg.style.opacity = 1.0;
+                send.appendChild(sendImg);
+            };
+            sendImg.src = 'add_friend.png';
+            send.src = 'add_friend.png';
+            send.onclick = function () {
+                addFriend(tr.id);
+            };
+            resultBoard.appendChild(tr);
+            tr.appendChild(td);
+            td.appendChild(recommend);
+            recommend.appendChild(profile);
+            recommend.appendChild(text);
+            recommend.appendChild(sb);
+            text.appendChild(name);
+            text.appendChild(depart);
+            text.appendChild(s_num);
+            sb.appendChild(send);
+            sb.appendChild(chat);
+        }
+        function changeDepth(id) {
+            if (id === "1") depth = 1;
+            else if (id === "2") depth = 2;
+            else if (id === "3") depth = 3;
+            mapping();
+        }
+        var refCheck = function (ref, id, obj) {
+            return new Promise(function (rend) {
+                // refCheck는 ref의 정보를 받아와 처리하는 과정입니다.
+                // 이 프로미스에 then()을 붙여 실행하면, 이 rend까지 끝나기 전엔 then() 이후 명령들이 실행되지 않습니다.
+                ref.once('value').then(function (snapshot) {
+                    obj.bool = false;
+                    // promise를 정의합니다.
+                    var promise = new Promise(function (pend) {
+                        // promise는 snapshot.forEach()를 써서 friend 항목의 모든 child를 검사하는 과정입니다.
+                        // 이 프로미스에 then()을 붙여 실행하면, pend까지 끝나기 전엔 then() 이후의 명령들이 실행되지 않습니다.
+                        snapshot.forEach(function (childsnapshot) {
+                            if (id === childsnapshot.key) {
+                                obj.bool = true;    // id와 같은 값을 가진 child가 있다면 bool을 true로 바꿉니다.
+                            }
+                        });
+                        pend('p성공');
+                    });
+                    // 정의한 promise를 실행합니다. pend를 마친 다음에야 then 이후의 명령을 수행합니다.
+                    promise.then(function (pendval) {
+                        // then의 function 안에 인자가 있으면 fend의 내용을 받아옵니다.
+                        // 왜 그런지는 저도 모릅니다.
+                        // promise.then() 안에 rend가 있으므로 refCheck는 promise가 끝난 이후에 끝납니다.
+                        rend('r성공');
+                    });
+                });
+            });
+        };
+        // 자료형이 문자열인 id를 받아 친구신청을 보낼 수 있다면 보내는 함수입니다.
+        function addFriend(id) {
+            console.log(id + 1);
+            var obj1 = new Object();    // /friend를 검사할 때 쓸 변수
+            var obj2 = new Object();    // /f_requestSent를 검사할 때 쓸 변수
+            var obj3 = new Object();    // /f_requestReceived를 검사할 때 쓸 변수
+
+            var ref1 = firebase.database().ref('userInfo/' + myId + '/friend');
+            var ref2 = firebase.database().ref('userInfo/' + myId + '/f_requestSent');
+            var ref3 = firebase.database().ref('userInfo/' + myId + '/f_requestReceived');
+
+
+            // friend, f_requestSent, f_requestReceived를 모두 검사해본 뒤 then() 이후의 명령을 실행합니다.
+            Promise.all([refCheck(ref1, id, obj1), refCheck(ref2, id, obj2), refCheck(ref3, id, obj3)]).then(function (val) {
+                console.log(val);
+                // 만약 id가 자신의 id가 아니고, 친구 목록, 요청한 친구 목록, 요청받은 친구목록에도 없다면
+                if (myId != id && obj1.bool == false && obj2.bool == false && obj3.bool == false) {
+                    // 자신의 f_requestSent에 상대방의 아이디를 추가하고
+                    firebase.database().ref('userInfo/' + myId + '/f_requestSent').child(id).set(id);
+                    // 상대방의 f_requestReceived에 자신의 아이디를 추가합니다.
+                    firebase.database().ref('userInfo/' + id + '/f_requestReceived').child(myId).set(myId);
+                    alert('친구신청하였습니다');
+
+                    // 추가한 친구의 알람에 알려준다
+                    database.ref('userInfo').once('value', function (snapshot) {
+                        snapshot.forEach(function (childSnapshot) {
+                            if (childSnapshot.val().num == myId) { // 신청한 친구의 이름을 알아온다
+                                firebase.database().ref('userInfo/' + id + '/alarm').child(myId).set(childSnapshot.val().name + '님이 친구를 신청하였습니다');
+                                console.log(childSnapshot.val().name);
+
+                            }
+                        });
+                    });
+
+                } else {
+                    alert('이미 신청하셨습니다');
+                }
+            });
+        }
+
+        function Node(id, height, parent) {
+            this.id = id;      // 친구의 학번
+            this.label = 'name';
+            var rad = Math.random() * 2 * Math.PI;
+            this.x = (height * Math.cos(rad)) / 5;
+            this.y = (height * Math.sin(rad)) / 5;
+            this.size = 1;
+            this.color = 'gray';
+
+            this.height = height;
+            this.parent = new Array();
+            this.parent[0] = parent;      // 자신으로부터 이 친구까지 가는 경로에서, 이 친구의 이전 노드
+            this.steppingStone = new Array();   // 자신으로부터 해당 id의 친구까지 가는 경로의 일부분이라는 뜻.
+            this.target = false;
+        }
+        Node.prototype.equals = function (id) {
+            if (this.id === id) {
+                return true;
+            }
+            else return false;
+        };
+        Node.prototype.pushStone = function (id) {
+            this.steppingStone.push(id);
+        };
+        Node.prototype.findStone = function (id) {
+            if (this.steppingStone.indexOf(id) === -1) {
+                return false;
+            }
+            else return true;
+        };
+
+        function Edge(n1, n2) {
+            this.id = n1 + '-' + n2;
+            this.source = n1;
+            this.target = n2;
+            this.color = 'orange';
+            this.steppingstone = new Array();   // 자신으로부터 해당 id의 친구까지 가는 경로의 일부분이라는 뜻.
+        }
+        Edge.prototype.isEdgeOf = function (n) {
+            if (this.source === n || this.target === n) {
+                return true;
+            }
+            else return false;
+        };
+        Edge.prototype.equals = function (n1, n2) {
+            if ((this.source === n1 && this.target === n2) || (this.source === n2 && this.target === n1)) {
+                return true;
+            }
+            else return false;
+        };
+        Edge.prototype.findStone = function (id) {
+            if (this.steppingstone.indexOf(id) === -1) {
+                return false;
+            }
+            else return true;
+        };
+
+        function enter() {
+            if (window.event.keyCode === 13) {
+                mapping();
+            }
+        }
+
+        // map에 높이 num인 half-tree를 만든 뒤
+        // lecture에 text가 들어있는 사람과 그 경로만을 남긴다.
+        function mapping() {
+            var text = document.getElementById('text').value;
+            var num = depth;
+            // 현재 map 속의 엘리먼트를 모두 지운다.
+            while (map.childNodes.length !== 0) map.removeChild(map.childNodes[0]);
+
+            // 노드 세트와 엣지 세트를 만든다.
+            var V = new Array();
+            var E = new Array();
+
+            // 높이 num의 half-tree그래프의 노드셋과 엣지 셋을 구한다.
+            makeRelationTree(V, E, num);
+            // lecture에 text가 들어있는 노드, 엣지만 남긴다.
+            prunningByLecture(text, V, E);
+            // sigma.js를 이용, 해당 그래프를 map에 출력한다
+            drawSigma(V, E);
+        }
+        function makeRelationTree(V, E, num) {
+            var node;           // 각 탐색에서 탐색의 시작이 되는 노드
+            var count = 1;      // height를 구분하기 위한 변수
+            var height = 1;     // 높이수
+            var queue = new Array();    // BFS에 쓸 큐
+            V.push(new Node(myId, 0, null));      // 노드 셋에 자신을 의미하는 노드를 넣는다.
+            V[0].label = '나';
+            queue.push(V[0]);   // 큐에 자신을 의미하는 노드를 넣는다.
+            bool = false;       //BFS가 끝나면 true가 된다.
+            BFS(node, count, queue, height, V, E, num);
+        }
+        function BFS(node, count, queue, height, V, E, num) {
+            // queue에서 탐색할 노드를 꺼내온다
+            node = queue.shift();
+            console.log(node);
+            count--;
+            // 노드의 friend를 nodeTraversal한다.
+            // 다 한 뒤, 카운트를 하나 감소시킨다.
+            // 카운트가 0이라면 해당 층의 노드를 모두 순회했단 뜻이므로, height를 하나 올리고 카운트를 queue.height로 갱신한다.
+            nodeTraversal(node, queue, V, E, height).then(function () {
+                if (count <= 0) {
+                    height = height + 1;
+                    count = queue.length;
+                }
+                if (height <= num && queue.length !== 0) {
+                    BFS(node, count, queue, height, V, E, num);
+                } else {
+                    bool = true;    // makeRelationTree가 다 끝났단 의미로 bool을 참으로 만든다.
+                }
+            });
+        }
+        // 노드를 탐색하는 프로미스입니다.
+        // 시작노드, 큐, 노드셋, 엣지셋, 현재높이를 인자로 받습니다.
+        var nodeTraversal = function (node, queue, V, E, height) {
+            return new Promise(function (end) {
+                // 시작노드 node에 대항하는 id의 friend를 탐색합니다.
+                var ref = firebase.database().ref('userInfo/' + node.id + '/friend');
+                ref.once('value').then(function (snapshot) {
+                    snapshot.forEach(function (childsnapshot) {
+                        // 일단 queue와 V에 추가해본다.
+                        V.push(new Node(childsnapshot.key, height, node));
+                        queue.push(V[V.length - 1]);
+                        var k = V.length - 1;
+                        firebase.database().ref('userInfo/' + V[k].id + '/name').once('value', function (snapshot) {
+                            if (V[k] !== undefined) {
+                                V[k].label = snapshot.val();
+                            }
+                        });
+                        // 추가한 자신 빼고 모두와 비교해보고,
+                        for (i = 0; i < V.length - 1; i++) {
+                            // 만약 이미 있는 노드였다면
+                            if (V[i].equals(childsnapshot.key)) {
+                                // 해당 노드의 parent를 업데이트하고,
+                                if (V[i].height >= height) {
+                                    V[i].parent.push(node);
+                                }
+                                // 중복인 이 노드를 뺀다.
+                                queue.pop();
+                                V.pop();
+                                break;
+                            }
+                        }
+                        // 일단 엣지를 넣고
+                        E.push(new Edge(node.id, childsnapshot.key));
+                        // 추가한 자신을 제외한 모두와 비교해보고
+                        for (i = 0; i < E.length - 1; i++) {
+                            // 만약 있는 엣지였다면
+                            if (E[i].equals(node.id, childsnapshot.key)) {
+                                // 중복이므로 뺀다.
+                                E.pop();
+                                break;
+                            }
+                        }
+                    });
+                    end("??");
+                });
+            });
+        };
+        function prunningByLecture(text, V, E) {
+            if (bool === true) {
+                bool = false;
+                // 검색한 모든 V 중 lecture에 text가 있는지 알아본다.
+                prun(0, V, E, text);
+            } else {
+                requestAnimationFrame(function () {
+                    prunningByLecture(text, V, E);
+                });
+            }
+        }
+        function prun(i, V, E, text) {
+            var obj = new Object();
+            obj.bool = false;
+            refCheck(firebase.database().ref('userInfo/' + V[i].id + '/lecture'), text, obj).then(function () {
+                // target을 true로 바꾸고 steppingStone을 활성화시킨다.
+                if (obj.bool === true) {
+                    V[i].target = true;
+                    makeSteppingStone(V[i], V[i].id);
+                    V[i].size = 5;
+                    V[i].color = 'rgb(255,0,0)';
+                }
+                i++;
+                if (i < V.length) prun(i, V, E, text);
+                else prun2(V, E);
+            });
+        }
+        function prun2(V, E) {
+            for (i = V.length - 1; i > 0; i--) {
+                if (V[i].steppingStone.length === 0) {
+                    for (j = E.length - 1; j >= 0; j--) {
+                        if (E[j].isEdgeOf(V[i].id)) {
+                            E.splice(j, 1);
+                        }
+                    }
+                    V.splice(i, 1);
+                }
+            }
+            bool = true;
+        }
+        function makeSteppingStone(node, targetId) {
+            node.steppingStone.push(targetId);
+            if (node.target === false)
+                node.color = 'rgb(128, 128, 128)';
+            for (i = 0; i < node.parent.length; i++) {
+                if (node.parent[i] === null) return;
+                makeSteppingStone(node.parent[i], targetId);
+            }
+        }
+        function drawSigma(V, E) {
+            // 비동기과정이 완료됐다면
+            if (bool === true) {
+                bool = false;
+                V[0].color = 'green';
+                V[0].size = 5;
+                // sigma.js의 형식에 맞게 json 오브젝트를 만든다.
+                var g = {
+                    nodes: [],
+                    edges: []
+                };
+                // 각 항목에 노드셋의 노드와 엣지셋의 엣지를 추가한다.
+                for (i = 0; i < V.length; i++) {
+                    g.nodes.push(V[i]);
+                }
+                for (i = 0; i < E.length; i++) {
+                    g.edges.push(E[i]);
+                }
+                // sigma 객체를 만들고 container에 그래프를 렌더링한다.
+                s = new sigma({
+                    graph: g,
+                    renderer: {
+                        container: map,
+                        type: 'canvas'
+                    },
+                    settings: {
+                        clickEnabled: true,
+                        defaultLabelSize: 45,
+                        labelThreshold: 1,
+                        minEdgeSize: 3,
+                        maxEdgeSize: 3
+                    }
+                });
+                s.bind('clickNode', function (e) {
+                    var node = e.data.node;
+                    if (node.target === true) {
+                        RB_Init();
+                        RB_Added(node.id);
+                    }
+                });
+            } else {
+                // 아직 이전의 비동기과정이 끝나지 않았다면
+                requestAnimationFrame(function () { drawSigma(V, E); });
+            }
+        }
+    </script>
+</head>
+<body onload="init()">
+    <div id="up_bar">
+        <img style="padding-bottom : 80px; margin : 0; height : 140px; width : 140px; margin-left : 30px; opacity : 1.0;" src="alarm.png" onclick="goAlarm()"><img src="name.png" style="margin-left: 50px; margin-top: 10px;  width : 550px; height : 280px; opacity: 1.0; " onclick="goHome()">
+        <img style="padding-left : 40px; padding-bottom : 100px; margin : 0; height : 110px; width : 110px; margin-left : 20px; opacity : 1.0;" src="search.png" onclick="goSearch()">
+    </div>
+    <article>
+        <div id="content">
+            <div id="select" style="font-size: 30px; overflow : hidden; padding-left: 30px;">
+                <br />&nbsp&nbsp
+                <div style = "float : left">
+                    <input type="radio" id="1" class="rad" name="name" onclick="changeDepth(this.id)" />
+                    <label for="1">한다리</label>
+                    <input type="radio" id="2" class="rad" name="name" onclick="changeDepth(this.id)" />
+                    <label for="2">두다리</label>
+                    <input type="radio" id="3" class="rad" name="name" onclick="changeDepth(this.id)" />
+                    <label for="3">세다리</label>
+                </div>
+                <div style = "float : right;"><input id="text" type=text value="과목번호" style="font-size : 50px; width : 200px;height : 60px; border: 3px solid #D5D5D5; float : right; margin : 0; padding : 0; margin-right: 70px; " onkeydown="enter()"  onclick="this.value='';"></div>
+
+            </div>
+            <div id="map" style="width : 920px; height : 870px; border : 3px solid grey; margin-left : 20px;">
+            </div>
+            <div id=info>
+                <table>
+                    <tbody id="resultBoard"></tbody>
+                </table>
+            </div>
+        </div>
+    </article>
+     <footer>
+        <div id=main><img src="home.png" onclick="goHome()"></div>
+        <div id=mapping><img style = "opacity : 1.0;" src="mapping_s.png" onclick="goMapping()"></div>
+        <div id=community><img src="community.png" onclick="goCommu()"></div>
+        <div id=chat><img src="chat.png" onclick="goChat()"></div>
+        <div id=info><img src="setting.png" onclick="goSet()" ;></div>
+    </footer>
+    <script>
+        function goAlarm() {
+            location.replace('info.html');
+        }
+        function goSearch() {
+            location.replace('search.html');
+        }
+        function goHome() {
+            location.replace('main.html');
+        }
+        function goMapping() {
+            location.replace('mapping.html');
+            //window.location.assign('mapping.html');
+        }
+        function goCommu() {
+            location.replace('community.html');
+        }
+        function goChat() {
+            location.replace('chat.html');
+        }
+        function goSet() {
+            location.replace('setting.html');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />-->
+    <!-- 안드로이드 홈화면추가시 상단 주소창 제거 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" href="/community_s.png">
+    <meta name="theme-color" content="#4898bd">
+
+
+    <!-- ios홈화면추가시 상단 주소창 제거 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="/community_s.png">
+
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #up_bar {
+            background-color: #58A8D0;
+            height: 230px;
+            width: 100%;
+        }
+
+        footer {
+            height: 200px;
+            overflow: hidden;
+            position: fixed;
+            bottom: 0px;
+            padding-left: 20px;
+            background-color: white;
+        }
+
+        #main, #mapping, #community, #chat, #info {
+            float: left;
+            height: 200px;
+            width: 188px;
+            border-top: 1px solid #58A8D0;
+        }
+
+        img {
+            height: 80px;
+            width: 80px;
+            margin-left: 60px;
+            margin-top: 60px;
+            opacity: 0.3;
+        }
+
+        #search {
+            padding-top: 30px;
+            overflow: hidden;
+            font-size: 45px;
+        }
+
+        #m_bar {
+            background-color: #D5D5D5;
+            height: 140px;
+        }
+
+        #content {
+            padding-left: 40px;
+            padding-top: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #A6A6A6;
+            color: black;
+            height: 180px;
+        }
+    </style>
+</head>
+<body onload="postList()">
+   <div id="up_bar">
+        <img style="padding-bottom : 80px; margin : 0; height : 140px; width : 140px; margin-left : 30px; opacity : 1.0;" src="alarm.png" onclick="goAlarm()"><img src="name.png" style="margin-left: 50px; margin-top: 10px;  width : 550px; height : 280px; opacity: 1.0; " onclick="goHome()">
+        <img style="padding-left : 40px; padding-bottom : 100px; margin : 0; height : 110px; width : 110px; margin-left : 20px; opacity : 1.0;" src="search.png" onclick="goSearch()">
+    </div>
+    <div id=m_bar>
+        <div id=search>
+            <select id=myselect1 style="float : left; height : 80px; width : 250px; font-size: 40px; margin-left : 50px;">
+                <option value="제목 및 내용">제목 및 내용</option>
+                <option value="과목 번호">과목 번호</option>
+            </select>
+            <input id=myselect2 style="height : 80px; margin-left : 20px; font-size: 50px; width : 350px; border : 0; float : left;" type="text"><div onclick="searchList()" style="margin-left : 20px; float : left; background-color: white; border : 3px solid #58A8D0; border-radius : 10px; width : 130px; height :80px; font-size : 55px;">&nbsp검색</div>
+            <img src="write.png" onclick="goWrite()" style="width : 90px; height : 90px; text-align: right; opacity: 1.0; margin : 0; padding : 0; margin-left: 50px; margin-top: -5px; margin-bottom: 10px;" />
+        </div>
+    </div>
+    <article id="cts" style = "overflow : auto; height : 1200px;">
+
+        <!--<div id = content >
+            <div>
+                <div style="overflow : hidden;">
+                    <p style="color : #747474; float : left; margin-top : 20px;">[1234]</p><p style="float : left;font-size: 50px; font-weight: bolder;">글로벌카페</p>
+                </div>
+                <p style="font-size: 40px; margin-bottom: 10px;">긱사생인데 글로벌 카페 뭐하는 곳인가요?</p>
+                <p>작성자</p>
+            </div>
+        </div>-->
+    </article>
+    <footer>
+        <div id=main><img src="home.png" onclick="goHome()"></div>
+        <div id=mapping><img src="mapping.png" onclick="goMapping()"></div>
+        <div id=community><img src="community_s.png" style="opacity : 1.0;" onclick="goCommu()"></div>
+        <div id=chat><img src="chat.png" onclick="goChat()"></div>
+        <div id=info><img src="setting.png" onclick="goSet()" ;></div>
+    </footer>
+    <script>
+        function goAlarm() {
+            location.replace('info.html');
+        }
+        function goSearch() {
+            location.replace('search.html');
+        }
+        function goHome() {
+            location.replace('main.html');
+        }
+        function goMapping() {
+            location.replace('mapping.html');
+            //window.location.assign('mapping.html');
+        }
+        function goCommu() {
+            location.replace('community.html');
+        }
+        function goChat() {
+            location.replace('chat.html');
+        }
+        function goSet() {
+            location.replace('setting.html');
+        }
+        function goWrite() {
+            location.replace('write.html');
+        }
+        function goView() {
+            location.replace('view.html');
+        }
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.1/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAINOpROygK44HoqMJCbflrh9sJGDXuBv8",
+            authDomain: "friend-s-friends.firebaseapp.com",
+            databaseURL: "https://friend-s-friends.firebaseio.com",
+            projectId: "friend-s-friends",
+            storageBucket: "friend-s-friends.appspot.com",
+            messagingSenderId: "330666557474"
+        };
+        firebase.initializeApp(config);
+
+
+        //var database = firebase.database();
+
+        var nnum = sessionStorage.num; //로그인 한사람의 학번
+        var outleng = 15; //게시글 내용 출력 제한길이
+
+        var p_subnum;//과목번호
+        var p_title;//제목
+        var p_contents;//내용
+        var p_inNum;//게시글 고유번호
+        var p_anony ="";//익명이면 true 아니면 false
+        var p_time;//게시글 시간
+        var p_id;
+        var i, j;
+
+        var arr;
+        function postList() {//게시글 리스트
+
+            arr = new Array();
+            deletelist();
+
+            firebase.database().ref('posts').once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    var len = arr.length;
+                    arr[len] = new Array();
+                    arr[len][0] = childSnapshot.val().code;//게시글 고유번호
+                    arr[len][1] = childSnapshot.val().subNum;//과목번호
+                    arr[len][2] = childSnapshot.val().title;//제목
+                    p_anony = childSnapshot.val().anony;//익명
+                    p_contents = childSnapshot.val().contents;//내용
+                    if (p_contents.length > outleng) p_contents = p_contents.substring(0, outleng);//내용 출력 outleng자로 제한
+                    console.log(p_anony);
+                    if (p_anony == false)//익명이면
+
+                        p_id = childSnapshot.val().id;                   
+                    
+                    else 
+                        p_id = "익명"; //작성자
+                    
+                    
+
+                    arr[len][3] = p_id;//작성자
+                    arr[len][4] = p_contents;//내용
+                    console.log(arr[len][0] + ' ' + arr[len][1] + ' ' + arr[len][2] + ' ' + arr[len][3] + ' ' + arr[len][4] + ' ' + p_anony);
+                });
+                arr.reverse();
+
+                for (j = 0; j < arr.length; j++) {//게시글 고유 번호 // 과목 번호 // 제목 // 작성자 // 내용
+                    console.log('reverse :' + j + arr[j][0] + ' ' + arr[j][1] + ' ' + arr[j][2] + ' ' + arr[j][3] + ' ' + arr[j][4]);
+                    var lecResult = document.createElement("div");//과목정보를 출력할 공간을 만든다.
+                    var inner = '<div id = content onclick="setChildValue(\'' + arr[j][0] + '\')"><div><div style="overflow : hidden;"><p style="color : #747474; float : left; margin-top : 20px; font-size : 30px;">[' + arr[j][1] + ']</p><p style="font-size: 60px; font-weight: bolder;">' + arr[j][2] + '</p></div><div style="font-size: 50px; margin-bottom: 10px;">' + arr[j][4] + '</div><p>' + arr[j][3] + '</p></div></div>'
+
+                    //var inner = '<div id = content onclick="setChildValue(\'' + arr[j][0] + '\'><div ><div style="overflow : hidden;"><p style="color : #747474; float : left; margin-top : 20px; font-size : 30px;">[' + arr[j][1] + ']</p><p style="font-size: 60px; font-weight: bolder;">' + arr[j][2] + '</p></div><div style="font-size: 50px; margin-bottom: 10px;">' + arr[j][4] + '</div><p>' + arr[j][3] + '</p></div></div>';
+
+                    // lecResult에 들어갈 내용을 만든다. //버튼의 아이디가 과목번호이다.
+                    lecResult.innerHTML = inner; // lecResult 안에 넣어준다.
+                    document.getElementById('cts').appendChild(lecResult); //화면에 표시해준다.
+                    //document.getElementById('content').appendChild(lecResult);
+                }
+            });
+
+        }
+        function postList_str(str) {//내용 게시글 리스트
+            arr = new Array();
+            deletelist();
+
+            firebase.database().ref('posts').once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    p_title = childSnapshot.val().title;
+                    p_contents = childSnapshot.val().contents;
+                    if ((p_contents.search(str) !== -1) || (p_title.search(str) !== -1)) {
+                        var len = arr.length;
+                        arr[len] = new Array();
+                        arr[len][0] = childSnapshot.val().code;//게시글 고유번호
+                        arr[len][1] = childSnapshot.val().subNum;//과목번호
+                        arr[len][2] = p_title;//제목
+                        p_anony = childSnapshot.val().anony;//익명
+                        if (p_contents.length > outleng) p_contents = p_contents.substring(0, outleng);//내용 출력 15자로 제한
+                        if (p_anony == false)//익명이면
+
+                        p_id = childSnapshot.val().id;//작성자                        
+                    
+                    else 
+                        p_id = "익명"; //작성자
+                    
+                        arr[len][3] = p_id;//작성자
+                        arr[len][4] = p_contents;//내용
+                        console.log(arr[len][0] + ' ' + arr[len][1] + ' ' + arr[len][2] + ' ' + arr[len][3] + ' ' + arr[len][4]);
+                    }
+                });
+                arr.reverse();
+                if (arr.length === 0) {
+                    document.getElementById("cts").innerHTML = "검색 결과 없음";
+                }
+                for (j = 0; j < arr.length; j++) {
+                    console.log('reverse :' + j + arr[j][0] + ' ' + arr[j][1] + ' ' + arr[j][2] + ' ' + arr[j][3] + ' ' + arr[j][4]);
+                    var lecResult = document.createElement("div");//과목정보를 출력할 공간을 만든다.
+                    var inner = '<div id = content onclick="setChildValue(\'' + arr[j][0] + '\')"><div><div style="overflow : hidden;"><p style="color : #747474; float : left; margin-top : 20px; font-size : 30px;">[' + arr[j][1] + ']</p><p style="font-size: 60px; font-weight: bolder;">' + arr[j][2] + '</p></div><div style="font-size: 50px; margin-bottom: 10px;">' + arr[j][4] + '</div><p>' + arr[j][3] + '</p></div></div>';
+                    // lecResult에 들어갈 내용을 만든다. //버튼의 아이디가 과목번호이다.
+                    lecResult.innerHTML = inner; // lecResult 안에 넣어준다.
+                    document.getElementById('cts').appendChild(lecResult); //화면에 표시해준다.
+                    //document.getElementById('content').appendChild(lecResult);
+                }
+            });
+        }
+        function postList_sub(str) {//과목번호 게시글 리스트
+
+            arr = new Array();
+            deletelist();
+
+            firebase.database().ref('posts').once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    if (childSnapshot.val().subNum === str) {
+                        var len = arr.length;
+                        arr[len] = new Array();
+                        arr[len][0] = childSnapshot.val().code;//게시글 고유번호
+                        arr[len][1] = childSnapshot.val().subNum;//과목번호
+                        arr[len][2] = childSnapshot.val().title;//제목
+                        p_anony = childSnapshot.val().anony;//익명
+                        p_contents = childSnapshot.val().contents;//내용
+                        if (p_contents.length > outleng) p_contents = p_contents.substring(0, outleng);//내용 출력 15자로 제한
+                        if (p_anony == false)//익명이면
+                            p_id = childSnapshot.val().id;//작성자                        
+                        
+                        else 
+                            p_id = "익명"; //작성자
+                        
+                            arr[len][3] = p_id;//작성자
+                            arr[len][4] = p_contents;//내용
+                            console.log(arr[len][0] + ' ' + arr[len][1] + ' ' + arr[len][2] + ' ' + arr[len][3] + ' ' + arr[len][4]);
+                        }
+                });
+                arr.reverse();
+                if (arr.length === 0) {
+                    document.getElementById("content").innerHTML = "검색 결과 없음";
+                }
+                for (j = 0; j < arr.length; j++) {
+                    console.log('reverse :' + j + arr[j][0] + ' ' + arr[j][1] + ' ' + arr[j][2] + ' ' + arr[j][3] + ' ' + arr[j][4]);
+                    var lecResult = document.createElement("div");//과목정보를 출력할 공간을 만든다.
+                    var inner = '<div id = content onclick="setChildValue(\'' + arr[j][0] + '\')"><div><div style="overflow : hidden;"><p style="color : #747474; float : left; margin-top : 20px; font-size : 30px;">[' + arr[j][1] + ']</p><p style="font-size: 60px; font-weight: bolder;">' + arr[j][2] + '</p></div><div style="font-size: 50px; margin-bottom: 10px;">' + arr[j][4] + '</div><p>' + arr[j][3] + '</p></div></div>';
+
+                    // lecResult에 들어갈 내용을 만든다. //버튼의 아이디가 과목번호이다.
+                    lecResult.innerHTML = inner; // lecResult 안에 넣어준다.
+                    document.getElementById('cts').appendChild(lecResult); //화면에 표시해준다.
+                    //document.getElementById('content').appendChild(lecResult);
+                }
+            });
+        }
+        function deletelist() {
+            var item = document.getElementById("cts");
+            while (item.hasChildNodes()) {
+                item.removeChild(item.firstChild);
+            }
+        }
+        function setChildValue(index) {
+            //location.replace('write.html?index=' + index);
+            location.replace("view.html?index=" + index);
+        }
+        function searchList() {
+            var x = document.getElementById("myselect1").selectedIndex;
+            var str = document.getElementById("myselect2").value;
+            if (x === 0) { //제목 및 내용
+                postList_str(str);
+            }
+            else if (x === 1) { //과목번호
+                postList_sub(str);
+            }
+        }
+    </script>
+</body>
+</html>

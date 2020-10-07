@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />-->
+        
+	<!-- 안드로이드 홈화면추가시 상단 주소창 제거 -->
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="theme-color" content="#4898bd">
+	<link rel="icon" href="/community_s.png">
+	<!-- ios홈화면추가시 상단 주소창 제거 -->
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+	<link rel="apple-touch-startup-image" href="loading.png">
+	<link rel="apple-touch-icon" href="/community_s.png">
+
+	<title></title>
+	<style type="text/css">
+		*{
+			background-color: #58A8D0;
+			padding : 0;
+			margin : 0;
+		}
+		
+		input{
+			border : none;
+			border-bottom: 2px solid #D5D5D5;
+			width : 500px;
+			height: 100px;
+			background-color: #E6E6FF;
+			font-size : 70px;
+			color : #D5D5D5;
+
+		}
+		button{
+			border : 0;
+			margin-top : 50px;
+			margin-left : 350px;
+
+		}
+		p{
+			margin-bottom: -100px;
+			font-size: 30px;
+			color : white;
+			text-align: center;
+		}
+		#block{
+			margin-left : 215px;
+			background-color: white;
+			opacity: 0.2;
+			width : 530px;
+			height: 300px;
+			padding-top: 50px;
+			padding-left: 30px;
+
+		}
+		footer{
+			margin-top: 150px;
+		}
+		
+	</style>
+</head>
+<body>
+<img style = "width : 900px; height : 500px; margin-left : 30px;margin-top : 300px;" src = "name.png">
+<div id = block>
+	<input onclick="inputid()" onkeydown="enter()" id = 'id' type = text value = 'ID'>
+	<input onclick="inputpwd()" onkeydown="enter()" id = 'pw' type = password value = 'PASSWORD' style = "margin-top : 30px;" >
+</div>
+<button id="loginButton" onclick="login()"><img style = "width : 300px; height : 120px;background-color: #529EC4; border-radius: 20px; padding-bottom: 20px;" src = "login.png"></button>
+<br /><br /><br /><br /><br /><br />
+<footer><a href = join.html style = "text-decoration: none;"><p><u><b>여기</b></u>를 눌러 회원가입 하기</p></a></footer>
+	
+	<script src="https://www.gstatic.com/firebasejs/4.6.1/firebase.js"></script>
+	<script>
+
+	  // Initialize Firebase
+	  var config = {
+	    apiKey: "AIzaSyAINOpROygK44HoqMJCbflrh9sJGDXuBv8",
+	    authDomain: "friend-s-friends.firebaseapp.com",
+	    databaseURL: "https://friend-s-friends.firebaseio.com",
+	    projectId: "friend-s-friends",
+	    storageBucket: "friend-s-friends.appspot.com",
+	    messagingSenderId: "330666557474"
+	  };
+	  firebase.initializeApp(config);
+	  var database = firebase.database();
+
+	function login(){
+		var m_mail = document.getElementById('id').value;
+	    var m_password = document.getElementById('pw').value;
+	    database.ref('userInfo').once('value', function (snapshot) {
+	        //위 항목에 수신대기
+	        snapshot.forEach(function (childSnapshot) {
+	            //항목에 있는 모든 Child에 대한 수신대기
+	            if (childSnapshot.val().mail === m_mail+'@konkuk.ac.kr' && childSnapshot.val().password === m_password) {
+
+	            	//로그인 된 회원의 학번을 쿠키에 저장
+	                sessionStorage.num = childSnapshot.val().num;
+	                sessionStorage.name = childSnapshot.val().name;
+	                console.log(sessionStorage.num);
+
+	                if(childSnapshot.val().admitNum === 1){
+	                    window.location.replace('main.html');
+	                }else{
+	               	 	window.location.replace('admit.html');
+	                }
+
+
+	            } else {
+	            	console.log('로그인 실패');
+	            	console.log(childSnapshot.val().mail+' '+childSnapshot.val().password);
+	            }
+
+	        });
+	    });
+	}
+
+	function inputid(){
+	 	var id = document.getElementById('id');
+	 	id.value = "";
+	 	id.style.color = "black";
+	}
+
+	function inputpwd(){
+		 var pwd = document.getElementById('pw');
+		 pwd.value = "";
+		 pwd.style.color = "black";
+	}
+	function enter() {
+        if (window.event.keyCode == 13) {
+            // 엔터키가 눌렸을 때 실행할 내용
+            login();
+        }
+    }
+	</script>
+
+</body>
+</html>

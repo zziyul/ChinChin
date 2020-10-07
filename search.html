@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />-->
+    <!-- 안드로이드 홈화면추가시 상단 주소창 제거 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" href="/community_s.png">
+    <meta name="theme-color" content="#4898bd">
+    
+
+    <!-- ios홈화면추가시 상단 주소창 제거 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="/community_s.png">
+
+    <title></title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #up_bar {
+            background-color: #58A8D0;
+            height: 230px;
+            width: 100%;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        footer {
+            height: 200px;
+            overflow: hidden;
+            position: fixed;
+            bottom: 0px;
+            background-color: white;
+            padding-left: 20px;
+        }
+
+        #main, #mapping, #community, #chat, #info {
+            float: left;
+            height: 200px;
+            width: 188px;
+            border-top: 1px solid #58A8D0;
+        }
+
+        img {
+            height: 80px;
+            width: 80px;
+            margin-left: 60px;
+            margin-top: 60px;
+            opacity: 0.3;
+        }
+
+        #content {
+            background-color: #CACACA;
+            height: 1295px;
+        }
+
+        input {
+            margin-left: 35px;
+            width: 800px;
+            height: 100px;
+            font-size: 40px;
+            margin-top: 50px;
+            float: left;
+        }
+
+        #search {
+            overflow: hidden;
+        }
+
+        #bt {
+            background-color: #58A8D0;
+            float: left;
+            margin-top: 50px;
+            width: 100px;
+            height: 105px;
+        }
+
+        #recommend {
+            width: 900px;
+            height: 200px;
+            margin-left: 35px;
+            background-color: white;
+        }
+
+        #profile {
+            float: left;
+            width: 150px;
+            height: 150px;
+            margin: 25px;
+            opacity: 1.0;
+        }
+
+        #text {
+            margin-top: 25px;
+            float: left;
+            font-size: 35px;
+        }
+
+        #recommend {
+            overflow: hidden;
+        }
+
+            #recommend button {
+                margin-top: 40px;
+                width: 120px;
+                height: 120px;
+                float: left;
+            }
+
+        #sb {
+            overflow: hidden;
+            float: right;
+        }
+    </style>
+</head>
+<body onload="showRecommend()">
+    <div id="up_bar">
+        <img style="padding-bottom : 80px; margin : 0; height : 140px; width : 140px; margin-left : 30px; opacity : 1.0;" src="alarm.png" onclick="goAlarm()"><img src="name.png" style="margin-left: 50px; margin-top: 10px;  width : 550px; height : 280px; opacity: 1.0; " onclick="goHome()">
+        <img style="padding-left : 40px; padding-bottom : 100px; margin : 0; height : 110px; width : 110px; margin-left : 20px; opacity : 1.0;" src="search.png" onclick="goSearch()">
+    </div>
+    <div id=content>
+        <div id=search>
+            <input id="name" type=text value="학과, 학번 또는 이름을 입력하세요" style="padding-left : 20px; font-size : 50px;" onfocus="this.select()" onkeydown="enter()" onclick="this.value = '';">
+            <div id=bt>
+                <img style="width : 90px; height : 90px; margin : 0; padding : 0; opacity: 1.0" src="search.png" onclick="searchMyName()">
+            </div>
+        </div>
+        &nbsp;
+        <div id="searchResult">
+            <!-- 검색결과가 출력됩니다. -->
+        </div>
+
+        <!-- <div id = recommend>
+            <img id = profile src = dog.jpg>
+            <div id = text>
+                <div id = name>강지율</div>
+                <div id = depart>소프트웨어학과</div>
+                <div id = s_num>201611180</div>
+            </div>
+            <div id = sb>
+                <button><img style = "margin : 0; width : 100px; height : 100px; opacity: 1.0;" src = add_friend.png></button>
+                <button><img style = "margin : 0; width : 100px; height : 100px; opacity: 1.0;" src = chat.png></button>
+            </div>
+        </div> -->
+
+
+    </div>
+    <footer>
+        <div id=main><img src="home.png" onclick="goHome()"></div>
+        <div id=mapping><img src="mapping.png" onclick="goMapping()"></div>
+        <div id=community><img src="community.png" onclick="goCommu()"></div>
+        <div id=chat><img src="chat.png" onclick="goChat()"></div>
+        <div id=info><img src="setting.png" onclick="goSet()" ;></div>
+    </footer>
+    <script>
+        function goAlarm() {
+            location.replace('info.html');
+        }
+        function goSearch() {
+            location.replace('search.html');
+        }
+        function goHome() {
+            location.replace('main.html');
+        }
+        function goMapping() {
+            location.replace('mapping.html');
+            //window.location.assign('mapping.html');
+        }
+        function goCommu() {
+            location.replace('community.html');
+        }
+        function goChat() {
+            location.replace('chat.html');
+        }
+        function goSet() {
+            location.replace('setting.html');
+        }
+    </script>
+
+    <script src="https://www.gstatic.com/firebasejs/4.6.1/firebase.js"></script>
+
+    <script type="text/javascript">
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAINOpROygK44HoqMJCbflrh9sJGDXuBv8",
+            authDomain: "friend-s-friends.firebaseapp.com",
+            databaseURL: "https://friend-s-friends.firebaseio.com",
+            projectId: "friend-s-friends",
+            storageBucket: "friend-s-friends.appspot.com",
+            messagingSenderId: "330666557474"
+        };
+        firebase.initializeApp(config);
+        var database = firebase.database();
+        var i = 0;
+
+        var myId = sessionStorage.num;
+
+        //회원정보를 데이터 베이스에 삽입한다.
+        function searchMyName() {
+            var m_name = document.getElementById('name').value;
+
+            //검색결과 다 지우기
+            var element = document.getElementById('searchResult');
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+
+            //이름으로 검색하는 경우
+            database.ref('userInfo').once('value', function (snapshot) {
+                //위 항목에 수신대기
+                snapshot.forEach(function (childSnapshot) {
+                    //항목에 있는 모든 Child에 대한 수신대기
+                    if (childSnapshot.val().name === m_name) {
+                        var lecResult = document.createElement("div");//과목정보를 출력할 공간을 만든다.
+                        var inner = '<div id = "recommend"><img id = profile src = dog.jpg><div id = text><div id = name>' + childSnapshot.val().name + '</div><div id = depart>' + childSnapshot.val().major + '</div><div id = s_num>' + childSnapshot.val().num + '</div></div><div id = sb><button onclick=addFriend(' + childSnapshot.val().num + ') style = "background-color: white; border-radius: 10px;"><img style = "margin : 0; width : 100px; height : 100px; opacity: 1.0;" src = add_friend.png></button><button onclick="select_c(' + childSnapshot.val().num + ')" style = "background-color: white; border-radius: 10px;"><img style = "margin : 0; width : 100px; height : 100px; opacity: 1.0;" src = chat.png></button>&nbsp&nbsp</div></div>'
+                        lecResult.innerHTML = inner; // lecResult 안에 넣어준다.
+                        document.getElementById('searchResult').appendChild(lecResult); //화면에 표시해준다.
+
+                        console.log(childSnapshot.val().name);
+                        console.log(childSnapshot.val().num);
+                        console.log(childSnapshot.val().major);
+                    }
+                });
+            });
+
+            //학번으로 검색하는 경우
+            database.ref('userInfo').once('value', function (snapshot) {
+                //위 항목에 수신대기
+                snapshot.forEach(function (childSnapshot) {
+                    //항목에 있는 모든 Child에 대한 수신대기
+                    if (childSnapshot.val().num === m_name) {
+                        var lecResult = document.createElement("div");//과목정보를 출력할 공간을 만든다.
+                        var inner = '<div id = "recommend"><img id = profile src = dog.jpg><div id = text><div id = name>' + childSnapshot.val().name + '</div><div id = depart>' + childSnapshot.val().major + '</div><div id = s_num>' + childSnapshot.val().num + '</div></div><div id = sb><button onclick=addFriend(' + childSnapshot.val().num + ') style = "background-color: white; border-radius: 10px;"><img style = "margin : 0; width : 100px; height : 100px; opacity: 1.0;" src = add_friend.png></button><button onclick="select_c(' + childSnapshot.val().num + ')" style = "background-color: white; border-radius: 10px;"><img style = "margin : 0; width : 100px; height : 100px; opacity: 1.0;" src = chat.png></button>&nbsp&nbsp</div></div>'
+
+                        lecResult.innerHTML = inner; // lecResult 안에 넣어준다.
+                        document.getElementById('searchResult').appendChild(lecResult); //화면에 표시해준다.
+
+                        console.log(childSnapshot.val().name);
+                        console.log(childSnapshot.val().num);
+                        console.log(childSnapshot.val().major);
+                    }
+                });
+            });
+        }
+
+        function enter() {
+            if (window.event.keyCode == 13) {
+                // 엔터키가 눌렸을 때 실행할 내용
+                searchMyName();
+            }
+        }
+        var refCheck = function (ref, id, obj) {
+            return new Promise(function (rend) {
+                // refCheck는 ref의 정보를 받아와 처리하는 과정입니다.
+                // 이 프로미스에 then()을 붙여 실행하면, 이 rend까지 끝나기 전엔 then() 이후 명령들이 실행되지 않습니다.
+                ref.once('value').then(function (snapshot) {
+                    obj.bool = false;
+                    // promise를 정의합니다.
+                    var promise = new Promise(function (pend) {
+                        // promise는 snapshot.forEach()를 써서 friend 항목의 모든 child를 검사하는 과정입니다.
+                        // 이 프로미스에 then()을 붙여 실행하면, pend까지 끝나기 전엔 then() 이후의 명령들이 실행되지 않습니다.
+                        snapshot.forEach(function (childsnapshot) {
+                            if (id == childsnapshot.key) {
+                                obj.bool = true;    // id와 같은 값을 가진 child가 있다면 bool을 true로 바꿉니다.
+                            }
+                        });
+                        pend('p성공');
+                    });
+                    // 정의한 promise를 실행합니다. pend를 마친 다음에야 then 이후의 명령을 수행합니다.
+                    promise.then(function (pendval) {
+                        // then의 function 안에 인자가 있으면 fend의 내용을 받아옵니다.
+                        // 왜 그런지는 저도 모릅니다.
+                        console.log(pendval);
+                        // promise.then() 안에 rend가 있으므로 refCheck는 promise가 끝난 이후에 끝납니다.
+                        rend('r성공');
+                    });
+                });
+            });
+        };
+
+        // 자료형이 문자열인 id를 받아 친구신청을 보낼 수 있다면 보내는 함수입니다.
+        function addFriend(id) {
+            console.log(id + 1);
+            var obj1 = new Object();    // /friend를 검사할 때 쓸 변수
+            var obj2 = new Object();    // /f_requestSent를 검사할 때 쓸 변수
+            var obj3 = new Object();    // /f_requestReceived를 검사할 때 쓸 변수
+
+            var ref1 = firebase.database().ref('userInfo/' + myId + '/friend');
+            var ref2 = firebase.database().ref('userInfo/' + myId + '/f_requestSent');
+            var ref3 = firebase.database().ref('userInfo/' + myId + '/f_requestReceived');
+
+
+
+
+
+            // friend, f_requestSent, f_requestReceived를 모두 검사해본 뒤 then() 이후의 명령을 실행합니다.
+            Promise.all([refCheck(ref1, id, obj1), refCheck(ref2, id, obj2), refCheck(ref3, id, obj3)]).then(function (val) {
+                console.log(val);
+                // 만약 id가 자신의 id가 아니고, 친구 목록, 요청한 친구 목록, 요청받은 친구목록에도 없다면
+                if (myId != id && obj1.bool == false && obj2.bool == false && obj3.bool == false) {
+                    // 자신의 f_requestSent에 상대방의 아이디를 추가하고
+                    firebase.database().ref('userInfo/' + myId + '/f_requestSent').child(id).set(id);
+                    // 상대방의 f_requestReceived에 자신의 아이디를 추가합니다.
+                    firebase.database().ref('userInfo/' + id + '/f_requestReceived').child(myId).set(myId);
+                    alert('친구신청하였습니다');
+
+                    // 추가한 친구의 알람에 알려준다
+                    database.ref('userInfo').once('value', function (snapshot) {
+                        snapshot.forEach(function (childSnapshot) {
+                            if (childSnapshot.val().num == myId) { // 신청한 친구의 이름을 알아온다
+                                firebase.database().ref('userInfo/' + id + '/alarm').child(myId).set(childSnapshot.val().name + '님이 친구를 신청하였습니다');
+                                console.log(childSnapshot.val().name);
+
+                            }
+                        });
+                    });
+
+                } else {
+                    alert('이미 신청하셨습니다');
+                }
+            });
+        }
+
+        var myFriend = [];
+        function getMyFriend() { // 내 친구정보를 다 담는다. 추천친구에서 이미 친구를 추천해주는 현상을 막기 위해
+            myFriend = [];
+            database.ref('userInfo/' + myId + '/friend').once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    myFriend.push(childSnapshot.key);
+                });
+            });
+
+            database.ref('userInfo/' + myId + '/f_requestSent').once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    myFriend.push(childSnapshot.key);
+                });
+            });
+            myFriend.push(myId);//자기 자신도 추천하면 안되니깐 넣어준다.
+            console.log(myFriend);
+        }
+
+        function showRecommend() { // 추천친구를 보여준다.(같은 학과 학생들을 보여준다.
+            getMyFriend();
+            var input;// 학과
+
+            //회원의 학과정보 가져오기
+            database.ref('userInfo').once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    if (childSnapshot.val().num === myId) {
+                        input = childSnapshot.val().major;
+
+                        //가져온 학과정보로 친구추천하기
+                        database.ref('userInfo').once('value', function (snapshot) {
+                            snapshot.forEach(function (childSnapshot) {
+                                if (childSnapshot.val().major === input) {
+                                    var isFriend = 0;// 이미 친구입니까? 0 : 아니요
+                                    for (var i = 0; i < myFriend.length; i++) {
+                                        if (childSnapshot.val().num == myFriend[i]) {
+                                            isFriend = 1;
+                                            console.log(myFriend[i]);
+                                        }
+                                    }
+                                    if (isFriend == 0) { // 이미 친구가 아니였다면 출력해주기
+                                        var lecResult = document.createElement("div");//과목정보를 출력할 공간을 만든다.
+                                        var inner = '<div id = "recommend"><img id = profile src = dog.jpg><div id = text><div id = name>' + childSnapshot.val().name + '</div><div id = depart>' + childSnapshot.val().major + '</div><div id = s_num>' + childSnapshot.val().num + '</div></div><div id = sb><button onclick=addFriend(' + childSnapshot.val().num + ') style = "background-color: white; border-radius: 10px;"><img style = "margin : 0; width : 100px; height : 100px; opacity: 1.0;" src = add_friend.png></button><button onclick="select_c(' + childSnapshot.val().num + ')" style = "background-color: white; border-radius: 10px;"><img style = "margin : 0; width : 100px; height : 100px; opacity: 1.0;" src = chat.png></button>&nbsp&nbsp</div></div>'
+                                        lecResult.innerHTML = inner; // lecResult 안에 넣어준다.
+                                        document.getElementById('searchResult').appendChild(lecResult); //화면에 표시해준다
+                                    }
+                                }
+                            });
+                        });
+                    }
+                });
+            });
+        }
+        function select_c(id) {
+            console.log(id);
+            firebase.database().ref('chat/' + myId).once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    console.log(childSnapshot.key);
+                    if (childSnapshot.key == id) { //기존에 있으면
+                        setChildValue(id);
+
+                    }
+                    else {
+                        addroom(id); //없으면 채팅방 만들기
+                        setChildValue(id); //그리고 이동
+                    }
+                });
+            });
+        }
+        function addroom(id) { //채팅방 추가
+
+            firebase.database().ref('chat/' + myId + '/' + id + '/chatroom').set({
+                chatroom: "채팅방 생성"
+            });
+        }
+
+        function setChildValue(index) {
+            location.replace("chatting.html?index=" + index);
+        }
+
+    </script>
+</body>
+</html>

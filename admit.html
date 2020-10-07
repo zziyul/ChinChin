@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+    <!-- 안드로이드 홈화면추가시 상단 주소창 제거 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#4898bd">
+
+    <link rel="icon" href="/community_s.png">
+    <!-- ios홈화면추가시 상단 주소창 제거 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="/community_s.png">
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+           
+        }
+
+        #circle {
+            height: 800px;
+            width: 800px;
+            border: 5px solid white;
+            border-radius: 400px;
+            margin-left: 80px;
+            margin-top: 100px;
+        }
+
+        pre {
+            margin-top: 400px;
+            color: white;
+            font-size: 60px;
+            text-align: center;
+        }
+
+        img {
+            position: relative;
+        }
+
+        input {
+            margin-top: 300px;
+            margin-left: 130px;
+            padding-left: 60px;
+            border: none;
+            border-bottom: 3px solid white;
+            width: 500px;
+            height: 200px;
+            font-size: 200px;
+            color: white;
+        }
+
+        button {
+            background : transparent;
+            border: none;
+            width: 200px;
+            height: 200px;
+            margin-left: 260px;
+            font-size: 40px;
+            color: white;
+        }
+    </style>
+</head>
+<body style="background-image:url('admitBack.jpg');">
+    <img src="admit.png" style="margin-left : 100px; margin-top : 200px; width : 800px; height : 350px; "/>
+    <div id=circle>
+        <input style ="background : transparent; color : white; "type=number id="inputAdmit" value='0000' onfocus="this.select()">
+        <button onclick="checkAdmitNum()"><img style="width:300px;" src="up.png"/></button>
+    </div>
+
+    <script src="https://smtpjs.com/smtp.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.1/firebase.js"></script>
+
+    <script type="text/javascript">
+
+
+
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAINOpROygK44HoqMJCbflrh9sJGDXuBv8",
+            authDomain: "friend-s-friends.firebaseapp.com",
+            databaseURL: "https://friend-s-friends.firebaseio.com",
+            projectId: "friend-s-friends",
+            storageBucket: "friend-s-friends.appspot.com",
+            messagingSenderId: "330666557474"
+        };
+        firebase.initializeApp(config);
+        var database = firebase.database();
+
+        //var nnum = document.cookie;//쿠키값 가져오기
+        var nnum = sessionStorage.num;
+        console.log(nnum);
+
+
+        var m_admitNum;
+        var m_mail;
+        database.ref('userInfo').once('value', function (snapshot) {
+            //위 항목에 수신대기
+            snapshot.forEach(function (childSnapshot) {
+
+
+
+                //항목에 있는 모든 Child에 대한 수신대기
+
+                if (childSnapshot.val().num == nnum) {
+                    m_admitNum = childSnapshot.val().admitNum;//인증번호 받아오기
+                    m_mail = childSnapshot.val().mail;//메일 받아오기
+
+
+
+                    if (m_mail != 'undefined') {
+                        //인증메일 보내기
+                        Email.send("johngip321@gmail.com",
+                            m_mail,
+                            "[친구에 친구] 이메일 인증번호입니다.",
+                            "귀하의 인증번호는 " + m_admitNum + " 입니다.",
+                            "smtp.gmail.com",
+                            "johngip321@gmail.com",
+                            "wjsrlvm123");
+                    }
+
+
+
+                }
+            });
+        });
+
+        function checkAdmitNum() {
+            if (m_admitNum != 'undefined') {
+
+                if (document.getElementById('inputAdmit').value == m_admitNum) {
+
+                    database.ref('userInfo').once('value', function (snapshot) {
+                        //위 항목에 수신대기
+                        snapshot.forEach(function (childSnapshot) {
+                            //항목에 있는 모든 Child에 대한 수신대기
+                            var mnum = sessionStorage.num;
+                            if (childSnapshot.val().num == mnum) {
+                                //childSnapshot.val().admitNum = 1;//인증완료했다는 뜻
+
+                                database.ref('userInfo/' + childSnapshot.val().num).set({
+                                    name: childSnapshot.val().name,
+                                    num: childSnapshot.val().num,
+                                    major: childSnapshot.val().major,
+                                    password: childSnapshot.val().password,
+                                    mail: childSnapshot.val().mail,
+                                    admitNum: 1
+                                });
+
+
+                                console.log(childSnapshot.val().admitNum);
+                                location.replace('main.html');
+                            }
+                        });
+                    });
+                }
+            }
+
+        }
+    </script>
+</body>
+</html>
